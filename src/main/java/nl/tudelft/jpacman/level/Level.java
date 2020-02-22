@@ -90,8 +90,7 @@ public class Level {
      * @param collisionMap
      *            The collection of collisions that should be handled.
      */
-    public Level(Board board, List<Ghost> ghosts, List<Square> startPositions,
-                 CollisionMap collisionMap) {
+    public Level(Board board, List<Ghost> ghosts, List<Square> startPositions, CollisionMap collisionMap) {
         assert board != null;
         assert ghosts != null;
         assert startPositions != null;
@@ -230,8 +229,7 @@ public class Level {
         for (final Ghost npc : npcs.keySet()) {
             ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
-            service.schedule(new NpcMoveTask(service, npc),
-                npc.getInterval() / 2, TimeUnit.MILLISECONDS);
+            service.schedule(new NpcMoveTask(service, npc),npc.getInterval() / 2, TimeUnit.MILLISECONDS);
 
             npcs.put(npc, service);
         }

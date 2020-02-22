@@ -65,9 +65,7 @@ public class PacManSprites extends SpriteStore {
         String resource = "/sprite/dead.png";
 
         Sprite baseImage = loadSprite(resource);
-        AnimatedSprite animation = createAnimatedSprite(baseImage, PACMAN_DEATH_FRAMES,
-            ANIMATION_DELAY, false);
-        animation.setAnimating(false);
+        AnimatedSprite animation = createAnimatedSprite(baseImage, PACMAN_DEATH_FRAMES, ANIMATION_DELAY, false);
 
         return animation;
     }
@@ -86,8 +84,7 @@ public class PacManSprites extends SpriteStore {
 
         Sprite baseImage = loadSprite(resource);
         for (int i = 0; i < DIRECTIONS.length; i++) {
-            Sprite directionSprite = baseImage.split(0, i * SPRITE_SIZE, frames
-                * SPRITE_SIZE, SPRITE_SIZE);
+            Sprite directionSprite = baseImage.split(0, i * SPRITE_SIZE, frames * SPRITE_SIZE, SPRITE_SIZE);
             AnimatedSprite animation = createAnimatedSprite(directionSprite,
                 frames, ANIMATION_DELAY, true);
             animation.setAnimating(true);

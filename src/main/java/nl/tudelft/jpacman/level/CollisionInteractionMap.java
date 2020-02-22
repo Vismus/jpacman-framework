@@ -18,8 +18,7 @@ public class CollisionInteractionMap implements CollisionMap {
     /**
      * The collection of collision handlers.
      */
-    private final Map<Class<? extends Unit>,
-        Map<Class<? extends Unit>, CollisionHandler<?, ?>>> handlers;
+    private final Map<Class<? extends Unit>, Map<Class<? extends Unit>, CollisionHandler<?, ?>>> handlers;
 
     /**
      * Creates a new, empty collision map.
@@ -44,8 +43,7 @@ public class CollisionInteractionMap implements CollisionMap {
      * @param handler
      *            The handler that handles the collision.
      */
-    public <C1 extends Unit, C2 extends Unit> void onCollision(
-        Class<C1> collider, Class<C2> collidee, CollisionHandler<C1, C2> handler) {
+    public <C1 extends Unit, C2 extends Unit> void onCollision(Class<C1> collider, Class<C2> collidee, CollisionHandler<C1, C2> handler) {
         onCollision(collider, collidee, true, handler);
     }
 
@@ -68,9 +66,7 @@ public class CollisionInteractionMap implements CollisionMap {
      * @param handler
      *            The handler that handles the collision.
      */
-    public <C1 extends Unit, C2 extends Unit> void onCollision(
-        Class<C1> collider, Class<C2> collidee, boolean symetric,
-        CollisionHandler<C1, C2> handler) {
+    public <C1 extends Unit, C2 extends Unit> void onCollision(Class<C1> collider, Class<C2> collidee, boolean symetric, CollisionHandler<C1, C2> handler) {
         addHandler(collider, collidee, handler);
         if (symetric) {
             addHandler(collidee, collider, new InverseCollisionHandler<>(handler));
@@ -87,8 +83,7 @@ public class CollisionInteractionMap implements CollisionMap {
      * @param handler
      *            The handler that handles the collision.
      */
-    private void addHandler(Class<? extends Unit> collider,
-                            Class<? extends Unit> collidee, CollisionHandler<?, ?> handler) {
+    private void addHandler(Class<? extends Unit> collider, Class<? extends Unit> collidee, CollisionHandler<?, ?> handler) {
         if (!handlers.containsKey(collider)) {
             handlers.put(collider, new HashMap<>());
         }
@@ -113,8 +108,7 @@ public class CollisionInteractionMap implements CollisionMap {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <C1 extends Unit, C2 extends Unit> void collide(C1 collider,
-                                                           C2 collidee) {
+    public <C1 extends Unit, C2 extends Unit> void collide(C1 collider, C2 collidee) {
         Class<? extends Unit> colliderKey = getMostSpecificClass(handlers, collider.getClass());
         if (colliderKey == null) {
             return;
@@ -144,8 +138,7 @@ public class CollisionInteractionMap implements CollisionMap {
      *            The class to search the most suitable key for.
      * @return The most specific class from the key collection.
      */
-    private Class<? extends Unit> getMostSpecificClass(
-        Map<Class<? extends Unit>, ?> map, Class<? extends Unit> key) {
+    private Class<? extends Unit> getMostSpecificClass(Map<Class<? extends Unit>, ?> map, Class<? extends Unit> key) {
         List<Class<? extends Unit>> collideeInheritance = getInheritance(key);
         for (Class<? extends Unit> pointer : collideeInheritance) {
             if (map.containsKey(pointer)) {
@@ -164,8 +157,7 @@ public class CollisionInteractionMap implements CollisionMap {
      * @return A list of all classes and interfaces the class inherits.
      */
     @SuppressWarnings("unchecked")
-    private List<Class<? extends Unit>> getInheritance(
-        Class<? extends Unit> clazz) {
+    private List<Class<? extends Unit>> getInheritance(Class<? extends Unit> clazz) {
         List<Class<? extends Unit>> found = new ArrayList<>();
         found.add(clazz);
 
@@ -220,8 +212,7 @@ public class CollisionInteractionMap implements CollisionMap {
      * @param <C2>
      *            The collidee type.
      */
-    private static class InverseCollisionHandler<C1 extends Unit, C2 extends Unit>
-        implements CollisionHandler<C1, C2> {
+    private static class InverseCollisionHandler<C1 extends Unit, C2 extends Unit> implements CollisionHandler<C1, C2> {
 
         /**
          * The handler of this collision.
