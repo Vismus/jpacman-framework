@@ -48,7 +48,7 @@ class BoardTest {
     @CsvSource({
             "0, 0",
             "1, 2",
-        "0, 1"
+            "0, 1"
     })
     void testSquareAt(int x, int y) {
         assertThat(board.squareAt(x, y)).isEqualTo(grid[x][y]);

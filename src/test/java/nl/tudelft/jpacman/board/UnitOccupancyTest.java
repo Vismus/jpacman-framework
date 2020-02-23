@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
  * @author Jeroen Roosen 
  *
  */
-class OccupantTest {
+class UnitOccupancyTest {
 
     /**
      * The unit under test.
@@ -57,5 +57,16 @@ class OccupantTest {
         unit.occupy(target);
         assertThat(unit.getSquare()).isEqualTo(target);
         assertThat(target.getOccupants()).contains(unit);
+    }
+
+    /**
+     * Test that the unit leaves the square.
+     */
+    @Test
+    void testLeaveSquare() {
+        Square target = new BasicSquare();
+        unit.occupy(target);
+        unit.leaveSquare();
+        assertThat(target.getOccupants()).doesNotContain(unit);
     }
 }

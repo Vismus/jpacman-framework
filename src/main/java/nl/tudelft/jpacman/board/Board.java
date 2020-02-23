@@ -88,7 +88,7 @@ public class Board {
      *            The <code>y</code> position (column) to test.
      * @return <code>true</code> iff the position is on this board.
      */
-    public boolean withinBorders(int x, int y) {
+    private boolean withinBorders(int x, int y) {
         return x >= 0 && x < getWidth() && y >= 0 && y < getHeight();
     }
 }
