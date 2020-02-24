@@ -10,7 +10,7 @@ import nl.tudelft.jpacman.Launcher;
 import nl.tudelft.jpacman.game.Game;
 
 /**
- * Step definitions for the Cucumber tests.
+ * Step definitions for startup Cucumber tests.
  *
  * The steps also support setting up a {@link Game} object
  * which other tests can use for further testing the game.

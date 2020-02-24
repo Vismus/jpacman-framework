@@ -6,7 +6,7 @@ import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;
 
 /**
- * Entry point for running the the Cucumber tests in JUnit.
+ * Entry point for running the the Cucumber startup tests in JUnit.
  *
  * @author Jan-Willem Gmelig Meyling
  */
