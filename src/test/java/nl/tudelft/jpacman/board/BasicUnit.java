@@ -12,7 +12,7 @@ class BasicUnit extends Unit {
     /**
      * Creates a new basic unit.
      */
-    BasicUnit() {
+    public BasicUnit() {
         super();
     }
 

@@ -2,6 +2,8 @@ package nl.tudelft.jpacman.board;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+
+import nl.tudelft.jpacman.common.BasicGround;
 import nl.tudelft.jpacman.sprite.PacManSprites;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -34,8 +36,8 @@ class BoardFactoryTest {
         PacManSprites sprites = mock(PacManSprites.class);
         factory = new BoardFactory(sprites);
 
-        s1 = new BasicSquare();
-        s2 = new BasicSquare();
+        s1 = new BasicGround();
+        s2 = new BasicGround();
     }
 
     /**

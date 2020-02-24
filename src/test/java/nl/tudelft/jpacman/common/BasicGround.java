@@ -1,18 +1,18 @@
-package nl.tudelft.jpacman.board;
+package nl.tudelft.jpacman.common;
 
+import nl.tudelft.jpacman.board.Square;
+import nl.tudelft.jpacman.board.Unit;
 import nl.tudelft.jpacman.sprite.Sprite;
 
 /**
- * Basic implementation of square.
- *
- * @author Jeroen Roosen 
+ * Basic implementation of ground square.
  */
-class BasicSquare extends Square {
+public class BasicGround extends Square {
 
     /**
-     * Creates a new basic square.
+     * Creates a new basic ground square.
      */
-    BasicSquare() {
+    public BasicGround() {
         super();
     }
 

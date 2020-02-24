@@ -1,5 +1,6 @@
 package nl.tudelft.jpacman.board;
 
+import nl.tudelft.jpacman.common.BasicGround;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +24,7 @@ class SquareTest {
      */
     @BeforeEach
     void setUp() {
-        square = new BasicSquare();
+        square = new BasicGround();
     }
 
     /**

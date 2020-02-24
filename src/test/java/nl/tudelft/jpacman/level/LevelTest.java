@@ -1,23 +1,19 @@
 package nl.tudelft.jpacman.level;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import com.google.common.collect.Lists;
 import nl.tudelft.jpacman.board.Board;
 import nl.tudelft.jpacman.board.Square;
 import nl.tudelft.jpacman.npc.Ghost;
-
-import com.google.common.collect.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests various aspects of level.
  *
- * @author Jeroen Roosen 
+ * @author Jeroen Roosen
  */
 // The four suppress warnings ignore the same rule, which results in 4 same string literals
 @SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.TooManyStaticImports"})
@@ -60,8 +56,7 @@ class LevelTest {
     @BeforeEach
     void setUp() {
         final long defaultInterval = 100L;
-        level = new Level(board, Lists.newArrayList(ghost), Lists.newArrayList(
-            square1, square2), collisions);
+        level = new Level(board, Lists.newArrayList(ghost), Lists.newArrayList(square1, square2), collisions);
         when(ghost.getInterval()).thenReturn(defaultInterval);
     }
 

@@ -1,9 +1,10 @@
 package nl.tudelft.jpacman.board;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import nl.tudelft.jpacman.common.BasicGround;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test suite to confirm that {@link Unit}s correctly (de)occupy squares.
@@ -40,7 +41,7 @@ class UnitOccupancyTest {
      */
     @Test
     void testOccupy() {
-        Square target = new BasicSquare();
+        Square target = new BasicGround();
         unit.occupy(target);
         assertThat(unit.getSquare()).isEqualTo(target);
         assertThat(target.getOccupants()).contains(unit);
@@ -52,7 +53,7 @@ class UnitOccupancyTest {
      */
     @Test
     void testReoccupy() {
-        Square target = new BasicSquare();
+        Square target = new BasicGround();
         unit.occupy(target);
         unit.occupy(target);
         assertThat(unit.getSquare()).isEqualTo(target);
@@ -64,7 +65,7 @@ class UnitOccupancyTest {
      */
     @Test
     void testLeaveSquare() {
-        Square target = new BasicSquare();
+        Square target = new BasicGround();
         unit.occupy(target);
         unit.leaveSquare();
         assertThat(target.getOccupants()).doesNotContain(unit);

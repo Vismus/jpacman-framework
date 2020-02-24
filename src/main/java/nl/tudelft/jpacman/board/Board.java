@@ -21,7 +21,7 @@ public class Board {
      *            x, row y.
      */
     @SuppressWarnings("PMD.ArrayIsStoredDirectly")
-    Board(Square[][] grid) {
+    public Board(Square[][] grid) {
         assert grid != null;
         this.board = grid;
         assert invariant() : "Initial grid cannot contain null squares";
