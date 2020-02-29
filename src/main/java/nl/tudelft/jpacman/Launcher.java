@@ -203,6 +203,7 @@ public class Launcher {
      *             When a resource could not be read.
      */
     public static void main(String[] args) throws IOException {
+        ConfigurationLoader.load("src/main/resources/configuration.properties");
         new Launcher().launch();
     }
 }

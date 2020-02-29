@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import nl.tudelft.jpacman.ConfigurationLoader;
 import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.board.Square;
 import nl.tudelft.jpacman.board.Unit;
@@ -44,18 +45,18 @@ public class Clyde extends Ghost {
     /**
      * The amount of cells Clyde wants to stay away from Pac Man.
      */
-    private static final int SHYNESS = 8;
+    private static final int SHYNESS = Integer.parseInt(ConfigurationLoader.getProperty("ghost.clyde.shyness"));
 
     /**
      * The variation in intervals, this makes the ghosts look more dynamic and
      * less predictable.
      */
-    private static final int INTERVAL_VARIATION = 50;
+    private static final int INTERVAL_VARIATION = Integer.parseInt(ConfigurationLoader.getProperty("ghost.clyde.interval.variation"));
 
     /**
      * The base movement interval.
      */
-    private static final int MOVE_INTERVAL = 250;
+    private static final int MOVE_INTERVAL = Integer.parseInt(ConfigurationLoader.getProperty("ghost.clyde.move.interval"));
 
     /**
      * A map of opposite directions.

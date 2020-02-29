@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import nl.tudelft.jpacman.ConfigurationLoader;
 import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.board.Square;
 import nl.tudelft.jpacman.board.Unit;
@@ -46,12 +47,12 @@ public class Blinky extends Ghost {
      * The variation in intervals, this makes the ghosts look more dynamic and
      * less predictable.
      */
-    private static final int INTERVAL_VARIATION = 50;
+    private static final int INTERVAL_VARIATION = Integer.parseInt(ConfigurationLoader.getProperty("ghost.blinky.interval.variation"));
 
     /**
      * The base movement interval.
      */
-    private static final int MOVE_INTERVAL = 250;
+    private static final int MOVE_INTERVAL = Integer.parseInt(ConfigurationLoader.getProperty("ghost.blinky.move.interval"));
 
     /**
      * Creates a new "Blinky", a.k.a. "Shadow".

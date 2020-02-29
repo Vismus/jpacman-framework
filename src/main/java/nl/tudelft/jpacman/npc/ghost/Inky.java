@@ -1,5 +1,6 @@
 package nl.tudelft.jpacman.npc.ghost;
 
+import nl.tudelft.jpacman.ConfigurationLoader;
 import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.board.Square;
 import nl.tudelft.jpacman.board.Unit;
@@ -33,18 +34,18 @@ import java.util.Optional;
  */
 public class Inky extends Ghost {
 
-    private static final int SQUARES_AHEAD = 2;
+    private static final int SQUARES_AHEAD = Integer.parseInt(ConfigurationLoader.getProperty("ghost.inky.squares.ahead"));
 
     /**
      * The variation in intervals, this makes the ghosts look more dynamic and
      * less predictable.
      */
-    private static final int INTERVAL_VARIATION = 50;
+    private static final int INTERVAL_VARIATION = Integer.parseInt(ConfigurationLoader.getProperty("ghost.inky.interval.variation"));
 
     /**
      * The base movement interval.
      */
-    private static final int MOVE_INTERVAL = 250;
+    private static final int MOVE_INTERVAL = Integer.parseInt(ConfigurationLoader.getProperty("ghost.inky.move.interval"));
 
     /**
      * Creates a new "Inky".
