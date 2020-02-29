@@ -62,8 +62,7 @@ public final class Navigation {
     private static void addNewTargets(Unit traveller, List<Node> targets, Set<Square> visited, Node node, Square square) {
         for (Direction direction : Direction.values()) {
             Square target = square.getSquareAt(direction);
-            if (!visited.contains(target)
-                && (traveller == null || target.isAccessibleTo(traveller))) {
+            if (!visited.contains(target) && (traveller == null || target.isAccessibleTo(traveller))) {
                 targets.add(new Node(direction, target, node));
             }
         }

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import nl.tudelft.jpacman.PacmanConfigurationException;
+import nl.tudelft.jpacman.exceptions.PacmanConfigurationException;
 import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.npc.ghost.GhostColor;
 
@@ -65,9 +65,8 @@ public class PacManSprites extends SpriteStore {
         String resource = "/sprite/dead.png";
 
         Sprite baseImage = loadSprite(resource);
-        AnimatedSprite animation = createAnimatedSprite(baseImage, PACMAN_DEATH_FRAMES, ANIMATION_DELAY, false);
 
-        return animation;
+        return createAnimatedSprite(baseImage, PACMAN_DEATH_FRAMES, ANIMATION_DELAY, false);
     }
 
     /**

@@ -6,6 +6,7 @@ import java.util.List;
 
 import nl.tudelft.jpacman.board.BoardFactory;
 import nl.tudelft.jpacman.board.Direction;
+import nl.tudelft.jpacman.exceptions.PacmanConfigurationException;
 import nl.tudelft.jpacman.game.Game;
 import nl.tudelft.jpacman.game.GameFactory;
 import nl.tudelft.jpacman.level.Level;
@@ -29,7 +30,7 @@ public class Launcher {
 
     private static final PacManSprites SPRITE_STORE = new PacManSprites();
 
-    public static final String DEFAULT_MAP = "/board.txt";
+    private static final String DEFAULT_MAP = "/board.txt";
     private String levelMap = DEFAULT_MAP;
 
     private PacManUI pacManUI;

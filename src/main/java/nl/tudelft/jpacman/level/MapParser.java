@@ -4,10 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.tudelft.jpacman.PacmanConfigurationException;
+import nl.tudelft.jpacman.exceptions.PacmanConfigurationException;
 import nl.tudelft.jpacman.board.Board;
 import nl.tudelft.jpacman.board.BoardFactory;
 import nl.tudelft.jpacman.board.Square;
@@ -76,8 +77,7 @@ public class MapParser {
         return levelCreator.createLevel(board, ghosts, startPositions);
     }
 
-    private void makeGrid(char[][] map, int width, int height,
-                          Square[][] grid, List<Ghost> ghosts, List<Square> startPositions) {
+    private void makeGrid(char[][] map, int width, int height, Square[][] grid, List<Ghost> ghosts, List<Square> startPositions) {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 char c = map[x][y];
@@ -130,8 +130,7 @@ public class MapParser {
                 startPositions.add(playerSquare);
                 break;
             default:
-                throw new PacmanConfigurationException("Invalid character at "
-                    + x + "," + y + ": " + c);
+                throw new PacmanConfigurationException("Invalid character at " + x + "," + y + ": " + c);
         }
     }
 
@@ -219,8 +218,7 @@ public class MapParser {
      *             when the source could not be read.
      */
     public Level parseMap(InputStream source) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-            source, "UTF-8"))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(source, StandardCharsets.UTF_8))) {
             List<String> lines = new ArrayList<>();
             while (reader.ready()) {
                 lines.add(reader.readLine());

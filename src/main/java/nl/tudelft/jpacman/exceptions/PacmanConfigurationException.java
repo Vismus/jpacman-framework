@@ -1,4 +1,4 @@
-package nl.tudelft.jpacman;
+package nl.tudelft.jpacman.exceptions;
 
 /**
  * Exception that is thrown when JPacman cannot be properly loaded
