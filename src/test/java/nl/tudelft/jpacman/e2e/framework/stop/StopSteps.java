@@ -4,6 +4,7 @@ import cucumber.api.java.After;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import nl.tudelft.jpacman.ConfigurationLoader;
 import nl.tudelft.jpacman.Launcher;
 import nl.tudelft.jpacman.game.Game;
 
@@ -24,6 +25,7 @@ public class StopSteps {
      */
     @Given("^the user has launched the JPacman GUI and has pressed the start button$")
     public void theUserHasLaunchedAndStartTheJPacmanGUI() {
+        ConfigurationLoader.load("src/test/resources/configuration.properties");
         launcher = new Launcher();
         launcher.launch();
         getGame().start();

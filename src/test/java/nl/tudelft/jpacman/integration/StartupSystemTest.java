@@ -1,5 +1,6 @@
 package nl.tudelft.jpacman.integration;
 
+import nl.tudelft.jpacman.ConfigurationLoader;
 import nl.tudelft.jpacman.Launcher;
 import nl.tudelft.jpacman.game.Game;
 import org.junit.jupiter.api.AfterEach;
@@ -20,6 +21,7 @@ public class StartupSystemTest {
      */
     @BeforeEach
     public void before() {
+        ConfigurationLoader.load("src/test/resources/configuration.properties");
         launcher = new Launcher();
     }
 

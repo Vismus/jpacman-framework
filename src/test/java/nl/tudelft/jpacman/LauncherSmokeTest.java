@@ -33,6 +33,7 @@ public class LauncherSmokeTest {
      */
     @BeforeEach
     void setUpPacman() {
+        ConfigurationLoader.load("src/test/resources/configuration.properties");
         launcher = new Launcher();
         launcher.launch();
     }
