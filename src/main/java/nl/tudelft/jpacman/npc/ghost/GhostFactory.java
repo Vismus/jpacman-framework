@@ -6,7 +6,7 @@ import nl.tudelft.jpacman.sprite.PacManSprites;
 /**
  * Factory that creates ghosts.
  *
- * @author Jeroen Roosen 
+ * @author Jeroen Roosen
  */
 public class GhostFactory {
 
@@ -27,8 +27,8 @@ public class GhostFactory {
     /**
      * Creates a new Blinky / Shadow, the red Ghost.
      *
-     * @see Blinky
      * @return A new Blinky.
+     * @see Blinky
      */
     public Ghost createBlinky() {
         return new Blinky(sprites.getGhostSprite(GhostColor.RED));
@@ -37,8 +37,8 @@ public class GhostFactory {
     /**
      * Creates a new Pinky / Speedy, the pink Ghost.
      *
-     * @see Pinky
      * @return A new Pinky.
+     * @see Pinky
      */
     public Ghost createPinky() {
         return new Pinky(sprites.getGhostSprite(GhostColor.PINK));
@@ -47,8 +47,8 @@ public class GhostFactory {
     /**
      * Creates a new Inky / Bashful, the cyan Ghost.
      *
-     * @see Inky
      * @return A new Inky.
+     * @see Inky
      */
     public Ghost createInky() {
         return new Inky(sprites.getGhostSprite(GhostColor.CYAN));
@@ -57,10 +57,19 @@ public class GhostFactory {
     /**
      * Creates a new Clyde / Pokey, the orange Ghost.
      *
-     * @see Clyde
      * @return A new Clyde.
+     * @see Clyde
      */
     public Ghost createClyde() {
         return new Clyde(sprites.getGhostSprite(GhostColor.ORANGE));
+    }
+
+    /**
+     * Creates a new random ghost.
+     *
+     * @return A random ghost
+     */
+    public Ghost createRandomGhost() {
+        return new RandomGhost(sprites.getGhostSprite(GhostColor.RED));
     }
 }

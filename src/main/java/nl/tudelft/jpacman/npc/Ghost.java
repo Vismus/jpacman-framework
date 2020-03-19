@@ -77,6 +77,9 @@ public abstract class Ghost extends Unit {
      * @return The suggested delay between moves in milliseconds.
      */
     public long getInterval() {
+        if(this.intervalVariation == 0) {
+            return this.moveInterval;
+        }
         return this.moveInterval + new Random().nextInt(this.intervalVariation);
     }
 
