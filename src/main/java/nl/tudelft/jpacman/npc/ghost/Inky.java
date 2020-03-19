@@ -103,13 +103,8 @@ public class Inky extends Ghost {
         }
 
         Square destination = followPath(firstHalf, playerDestination);
-        List<Direction> path = Navigation.shortestPath(getSquare(),
-            destination, this);
 
-        if (path != null && !path.isEmpty()) {
-            return Optional.ofNullable(path.get(0));
-        }
-        return Optional.empty();
+        return Navigation.getNextDirection(getSquare(), destination, this);
     }
 
 

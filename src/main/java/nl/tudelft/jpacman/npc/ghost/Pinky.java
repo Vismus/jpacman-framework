@@ -1,9 +1,5 @@
 package nl.tudelft.jpacman.npc.ghost;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import nl.tudelft.jpacman.ConfigurationLoader;
 import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.board.Square;
@@ -11,6 +7,9 @@ import nl.tudelft.jpacman.board.Unit;
 import nl.tudelft.jpacman.level.Player;
 import nl.tudelft.jpacman.npc.Ghost;
 import nl.tudelft.jpacman.sprite.Sprite;
+
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * <p>
@@ -46,8 +45,7 @@ import nl.tudelft.jpacman.sprite.Sprite;
  * Source: http://strategywiki.org/wiki/Pac-Man/Getting_Started
  * </p>
  *
- * @author Jeroen Roosen 
- *
+ * @author Jeroen Roosen
  */
 public class Pinky extends Ghost {
 
@@ -67,8 +65,7 @@ public class Pinky extends Ghost {
     /**
      * Creates a new "Pinky", a.k.a. "Speedy".
      *
-     * @param spriteMap
-     *            The sprites for this ghost.
+     * @param spriteMap The sprites for this ghost.
      */
     public Pinky(Map<Direction, Sprite> spriteMap) {
         super(spriteMap, MOVE_INTERVAL, INTERVAL_VARIATION);
@@ -99,10 +96,6 @@ public class Pinky extends Ghost {
         assert player.hasSquare();
         Square destination = player.squaresAheadOf(SQUARES_AHEAD);
 
-        List<Direction> path = Navigation.shortestPath(getSquare(), destination, this);
-        if (path != null && !path.isEmpty()) {
-            return Optional.ofNullable(path.get(0));
-        }
-        return Optional.empty();
+        return Navigation.getNextDirection(getSquare(), destination, this);
     }
 }
