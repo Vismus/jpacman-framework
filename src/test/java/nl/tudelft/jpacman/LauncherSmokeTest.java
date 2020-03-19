@@ -1,8 +1,10 @@
 package nl.tudelft.jpacman;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import nl.tudelft.jpacman.board.Direction;
+import nl.tudelft.jpacman.exceptions.PacmanConfigurationException;
 import nl.tudelft.jpacman.game.Game;
 import nl.tudelft.jpacman.level.Player;
 import org.junit.jupiter.api.AfterEach;
@@ -35,15 +37,12 @@ public class LauncherSmokeTest {
     void setUpPacman() {
         ConfigurationLoader.load("src/test/resources/configuration.properties");
         launcher = new Launcher();
-        launcher.launch();
     }
 
-    /**
-     * Quit the user interface when we're done.
-     */
-    @AfterEach
-    void tearDown() {
-        launcher.dispose();
+    @Test
+    void testNonexistentMapFile() {
+        launcher.withMapFile("/maps/nonexistentfile.txt");
+        assertThatThrownBy(() -> launcher.launch()).isInstanceOf(PacmanConfigurationException.class);
     }
 
     /**
@@ -56,6 +55,8 @@ public class LauncherSmokeTest {
     @SuppressWarnings({"magicnumber", "methodlength", "PMD.JUnitTestContainsTooManyAsserts"})
     @Test
     void smokeTest() throws InterruptedException {
+        launcher.launch();
+
         Game game = launcher.getGame();
         Player player = game.getPlayers().get(0);
 
@@ -98,6 +99,8 @@ public class LauncherSmokeTest {
 
         game.stop();
         assertThat(game.isInProgress()).isFalse();
+
+        launcher.dispose();
     }
 
     /**

@@ -26,8 +26,7 @@ public class Launcher {
 
     private static final PacManSprites SPRITE_STORE = new PacManSprites();
 
-    private static final String DEFAULT_MAP = "/board.txt";
-    private String levelMap = DEFAULT_MAP;
+    private String levelMap = ConfigurationLoader.getProperty("level.map");
 
     private PacManUI pacManUI;
     private Game game;
@@ -82,8 +81,7 @@ public class Launcher {
         try {
             return getMapParser().parseMap(getLevelMap());
         } catch (IOException e) {
-            throw new PacmanConfigurationException(
-                "Unable to create level, name = " + getLevelMap(), e);
+            throw new PacmanConfigurationException("Unable to create level, name = " + getLevelMap(), e);
         }
     }
 
@@ -192,9 +190,8 @@ public class Launcher {
      * Main execution method for the Launcher.
      *
      * @param args The command line arguments - which are ignored.
-     * @throws IOException When a resource could not be read.
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         ConfigurationLoader.load("src/main/resources/configuration.properties");
         new Launcher().launch();
     }
