@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 public class SpriteTest {
 
     private Sprite sprite;
+    private EmptySprite emptySprite;
     private SpriteStore store;
 
     private static final int SPRITE_SIZE = 64;
@@ -32,6 +33,7 @@ public class SpriteTest {
     public void setUp() throws IOException {
         store = new SpriteStore();
         sprite = store.loadSprite("/sprite/64x64white.png");
+        emptySprite = new EmptySprite();
     }
 
     /**
@@ -48,6 +50,22 @@ public class SpriteTest {
     @Test
     public void spriteHeight() {
         assertThat(sprite.getHeight()).isEqualTo(SPRITE_SIZE);
+    }
+
+    /**
+     * Verifies the width of an empty sprite.
+     */
+    @Test
+    public void emptySpriteWidth() {
+        assertThat(emptySprite.getWidth()).isEqualTo(0);
+    }
+
+    /**
+     * Verifies the height of an empty sprite.
+     */
+    @Test
+    public void emptySpriteHeight() {
+        assertThat(emptySprite.getHeight()).isEqualTo(0);
     }
 
     /**
@@ -108,5 +126,13 @@ public class SpriteTest {
     public void splitOutOfBounds() {
         Sprite split = sprite.split(10, 10, 64, 10);
         assertThat(split).isInstanceOf(EmptySprite.class);
+    }
+
+    /**
+     * Verifies that split EmptySprite is an EmptySprite
+     */
+    @Test
+    public void splitEmptySprite() {
+        assertThat(emptySprite.split(1, 2, 3, 4)).hasSameClassAs(emptySprite);
     }
 }

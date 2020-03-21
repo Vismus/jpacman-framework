@@ -1,33 +1,26 @@
 package nl.tudelft.jpacman.npc.ghost;
 
-import static org.mockito.Mockito.mock;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
-import nl.tudelft.jpacman.board.Board;
-import nl.tudelft.jpacman.board.BoardFactory;
-import nl.tudelft.jpacman.board.Direction;
-import nl.tudelft.jpacman.board.Square;
-import nl.tudelft.jpacman.board.Unit;
+import com.google.common.collect.Lists;
+import nl.tudelft.jpacman.board.*;
 import nl.tudelft.jpacman.level.LevelFactory;
 import nl.tudelft.jpacman.level.MapParser;
 import nl.tudelft.jpacman.level.Pellet;
 import nl.tudelft.jpacman.npc.Ghost;
 import nl.tudelft.jpacman.sprite.PacManSprites;
-
-import com.google.common.collect.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 /**
  * Tests the various methods provided by the {@link Navigation} class.
  *
  * @author Jeroen Roosen
- *
  */
 @SuppressWarnings({"magicnumber", "PMD.AvoidDuplicateLiterals"})
 class NavigationTest {
@@ -149,11 +142,22 @@ class NavigationTest {
      */
     @Test
     void testFullSizedLevel() throws IOException {
-        try (InputStream i = getClass().getResourceAsStream("/maps/board.txt")) {
+        try (InputStream i = getClass().getResourceAsStream("/maps/board-test.txt")) {
             Board b = parser.parseMap(i).getBoard();
             Square s1 = b.squareAt(1, 1);
             Unit unit = Navigation.findNearest(Ghost.class, s1);
             assertThat(unit).isNotNull();
         }
+    }
+
+    /**
+     * Checks that the FinUnitInBoard function finds the desired unit.
+     */
+    @Test
+    void testFindUnitInBoard() {
+        Board b = parser.parseMap(Lists.newArrayList("###", "#G#", "###")).getBoard();
+        Unit ghost1 = b.squareAt(1, 1).getOccupants().get(0);
+        Unit ghost2 = Navigation.findUnitInBoard(Unit.class, b);
+        assertThat(ghost1).isEqualTo(ghost2);
     }
 }

@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * An example test class that conducts integration tests.
+ * Class running integration tests to start and stop game.
  */
 public class StartStopSystemTest {
 
