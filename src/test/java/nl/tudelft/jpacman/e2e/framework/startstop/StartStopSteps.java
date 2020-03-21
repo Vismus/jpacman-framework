@@ -1,6 +1,4 @@
-package nl.tudelft.jpacman.e2e.framework.startup;
-
-import static org.assertj.core.api.Assertions.assertThat;
+package nl.tudelft.jpacman.e2e.framework.startstop;
 
 import cucumber.api.java.After;
 import cucumber.api.java.en.Given;
@@ -10,15 +8,17 @@ import nl.tudelft.jpacman.ConfigurationLoader;
 import nl.tudelft.jpacman.Launcher;
 import nl.tudelft.jpacman.game.Game;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
- * Step definitions for startup Cucumber tests.
- *
+ * Step definitions for start/stop Cucumber tests.
+ * <p>
  * The steps also support setting up a {@link Game} object
  * which other tests can use for further testing the game.
  *
  * @author Jan-Willem Gmelig Meyling, Arie van Deursen
  */
-public class StartupSteps {
+public class StartStopSteps {
 
     private Launcher launcher;
 
@@ -52,6 +52,22 @@ public class StartupSteps {
     @Then("^the game is running$")
     public void theGameShouldStart() {
         assertThat(getGame().isInProgress()).isTrue();
+    }
+
+    /**
+     * Stop the game.
+     */
+    @When("^the user presses the \"Stop\" button$")
+    public void theUserPressesStop() {
+        getGame().stop();
+    }
+
+    /**
+     * Verify that the game is not running anymore.
+     */
+    @Then("^the game is not running anymore$")
+    public void theGameShouldStop() {
+        assertThat(getGame().isInProgress()).isFalse();
     }
 
     /**

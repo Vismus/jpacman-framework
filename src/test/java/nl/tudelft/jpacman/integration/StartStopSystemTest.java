@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * An example test class that conducts integration tests.
  */
-public class StartupSystemTest {
+public class StartStopSystemTest {
 
     private Launcher launcher;
 
@@ -44,6 +44,19 @@ public class StartupSystemTest {
         getGame().start();
 
         assertThat(getGame().isInProgress()).isTrue();
+    }
+
+    /**
+     * The test that just starts and stop the
+     * game and checks it is indeed not in progress.
+     */
+    @Test
+    public void gameIsNotRunning() {
+        launcher.launch();
+        assertThat(getGame().isInProgress()).isFalse();
+        getGame().start();
+        getGame().stop();
+        assertThat(getGame().isInProgress()).isFalse();
     }
 
 
