@@ -20,10 +20,10 @@ public abstract class Unit {
     private Direction direction;
 
     /**
-     * Creates a unit that is facing east.
+     * Creates a unit that is facing west.
      */
     protected Unit() {
-        this.direction = Direction.EAST;
+        this.direction = Direction.WEST;
     }
 
     /**

@@ -6,6 +6,7 @@ import nl.tudelft.jpacman.exceptions.PacmanConfigurationException;
 import nl.tudelft.jpacman.game.Game;
 import nl.tudelft.jpacman.game.GameFactory;
 import nl.tudelft.jpacman.level.*;
+import nl.tudelft.jpacman.level.unit.Player;
 import nl.tudelft.jpacman.npc.ghost.GhostFactory;
 import nl.tudelft.jpacman.sprite.PacManSprites;
 import nl.tudelft.jpacman.ui.Action;
@@ -149,10 +150,15 @@ public class Launcher {
             .addKey(KeyEvent.VK_RIGHT, moveTowardsDirection(Direction.EAST));
     }
 
+    /**
+     * Changes the direction of movement of the unit.
+     * @param direction The new direction to adopt
+     * @return An action that can be executed
+     */
     private Action moveTowardsDirection(Direction direction) {
         return () -> {
             assert game != null;
-            getGame().move(getSinglePlayer(getGame()), direction);
+            getGame().setPlayerDirection(getSinglePlayer(getGame()), direction);
         };
     }
 

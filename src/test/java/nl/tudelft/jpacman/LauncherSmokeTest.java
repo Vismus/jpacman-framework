@@ -6,8 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.exceptions.PacmanConfigurationException;
 import nl.tudelft.jpacman.game.Game;
-import nl.tudelft.jpacman.level.Player;
-import org.junit.jupiter.api.AfterEach;
+import nl.tudelft.jpacman.level.unit.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -67,11 +66,11 @@ public class LauncherSmokeTest {
         assertThat(player.getScore()).isZero();
 
         // get points
-        game.move(player, Direction.EAST);
+        game.getLevel().move(player, Direction.EAST);
         assertThat(player.getScore()).isEqualTo(10);
 
         // now moving back does not change the score
-        game.move(player, Direction.WEST);
+        game.getLevel().move(player, Direction.WEST);
         assertThat(player.getScore()).isEqualTo(10);
 
         // try to move as far as we can
@@ -113,7 +112,7 @@ public class LauncherSmokeTest {
     public static void move(Game game, Direction dir, int numSteps) {
         Player player = game.getPlayers().get(0);
         for (int i = 0; i < numSteps; i++) {
-            game.move(player, dir);
+            game.getLevel().move(player, dir);
         }
     }
 }

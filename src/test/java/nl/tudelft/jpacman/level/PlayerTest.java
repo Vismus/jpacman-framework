@@ -2,6 +2,7 @@ package nl.tudelft.jpacman.level;
 
 import nl.tudelft.jpacman.ConfigurationLoader;
 import nl.tudelft.jpacman.Launcher;
+import nl.tudelft.jpacman.level.unit.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

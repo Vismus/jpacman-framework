@@ -1,6 +1,8 @@
 package nl.tudelft.jpacman.level;
 
 import nl.tudelft.jpacman.board.Unit;
+import nl.tudelft.jpacman.level.unit.Pellet;
+import nl.tudelft.jpacman.level.unit.Player;
 import nl.tudelft.jpacman.npc.Ghost;
 
 /**

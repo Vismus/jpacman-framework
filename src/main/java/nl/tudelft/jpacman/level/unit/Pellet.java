@@ -1,4 +1,4 @@
-package nl.tudelft.jpacman.level;
+package nl.tudelft.jpacman.level.unit;
 
 import nl.tudelft.jpacman.board.Unit;
 import nl.tudelft.jpacman.sprite.Sprite;

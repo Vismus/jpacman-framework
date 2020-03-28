@@ -5,7 +5,7 @@ import java.util.List;
 import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.level.Level;
 import nl.tudelft.jpacman.level.Level.LevelObserver;
-import nl.tudelft.jpacman.level.Player;
+import nl.tudelft.jpacman.level.unit.Player;
 
 /**
  * A basic implementation of a Pac-Man game.
@@ -78,17 +78,13 @@ public abstract class Game implements LevelObserver {
     public abstract Level getLevel();
 
     /**
-     * Moves the specified player one square in the given direction.
-     *
-     * @param player
-     *            The player to move.
-     * @param direction
-     *            The direction to move in.
+     * Change the direction of the player in the game.
+     * @param player The player
+     * @param direction The new direction to adopt
      */
-    public void move(Player player, Direction direction) {
+    public void setPlayerDirection(Player player, Direction direction) {
         if (isInProgress()) {
-            // execute player move.
-            getLevel().move(player, direction);
+            player.setDirection(direction);
         }
     }
 

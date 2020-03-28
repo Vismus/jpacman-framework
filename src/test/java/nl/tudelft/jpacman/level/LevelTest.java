@@ -3,6 +3,7 @@ package nl.tudelft.jpacman.level;
 import com.google.common.collect.Lists;
 import nl.tudelft.jpacman.board.Board;
 import nl.tudelft.jpacman.board.Square;
+import nl.tudelft.jpacman.level.unit.Player;
 import nl.tudelft.jpacman.npc.Ghost;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

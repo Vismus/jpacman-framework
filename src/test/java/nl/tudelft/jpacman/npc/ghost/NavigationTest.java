@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import nl.tudelft.jpacman.board.*;
 import nl.tudelft.jpacman.level.LevelFactory;
 import nl.tudelft.jpacman.level.MapParser;
-import nl.tudelft.jpacman.level.Pellet;
+import nl.tudelft.jpacman.level.unit.Pellet;
 import nl.tudelft.jpacman.npc.Ghost;
 import nl.tudelft.jpacman.sprite.PacManSprites;
 import org.junit.jupiter.api.BeforeEach;

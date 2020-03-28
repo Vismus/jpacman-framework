@@ -1,7 +1,8 @@
-package nl.tudelft.jpacman.level;
+package nl.tudelft.jpacman.level.unit;
 
 import java.util.Map;
 
+import nl.tudelft.jpacman.ConfigurationLoader;
 import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.board.Unit;
 import nl.tudelft.jpacman.sprite.AnimatedSprite;
@@ -35,6 +36,11 @@ public class Player extends Unit {
     private boolean alive;
 
     /**
+     * The base movement interval.
+     */
+    private static final int MOVE_INTERVAL = Integer.parseInt(ConfigurationLoader.getProperty("player.move.interval"));
+
+    /**
      * Creates a new player with a score of 0 points.
      *
      * @param spriteMap
@@ -42,7 +48,7 @@ public class Player extends Unit {
      * @param deathAnimation
      *            The sprite to be shown when this player dies.
      */
-    protected Player(Map<Direction, Sprite> spriteMap, AnimatedSprite deathAnimation) {
+    public Player(Map<Direction, Sprite> spriteMap, AnimatedSprite deathAnimation) {
         this.score = 0;
         this.alive = true;
         this.sprites = spriteMap;
@@ -82,6 +88,10 @@ public class Player extends Unit {
      */
     public int getScore() {
         return score;
+    }
+
+    public int getInterval() {
+        return this.MOVE_INTERVAL;
     }
 
     @Override

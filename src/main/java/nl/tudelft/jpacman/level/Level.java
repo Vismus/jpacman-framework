@@ -1,27 +1,26 @@
 package nl.tudelft.jpacman.level;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import nl.tudelft.jpacman.board.Board;
 import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.board.Square;
 import nl.tudelft.jpacman.board.Unit;
+import nl.tudelft.jpacman.level.movetask.NpcMoveTask;
+import nl.tudelft.jpacman.level.movetask.PlayerMoveTask;
+import nl.tudelft.jpacman.level.unit.Pellet;
+import nl.tudelft.jpacman.level.unit.Player;
 import nl.tudelft.jpacman.npc.Ghost;
+
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A level of Pac-Man. A level consists of the board with the players and the
  * AIs on it.
  *
- * @author Jeroen Roosen 
+ * @author Jeroen Roosen
  */
 @SuppressWarnings("PMD.TooManyMethods")
 public class Level {
@@ -48,6 +47,11 @@ public class Level {
     private final Map<Ghost, ScheduledExecutorService> npcs;
 
     /**
+     * The players on this level and, if they are running, their schedules.
+     */
+    private final Map<Player, ScheduledExecutorService> players;
+
+    /**
      * <code>true</code> iff this level is currently in progress, i.e. players
      * and NPCs can move.
      */
@@ -64,11 +68,6 @@ public class Level {
     private int startSquareIndex;
 
     /**
-     * The players on this level.
-     */
-    private final List<Player> players;
-
-    /**
      * The table of possible collisions between units.
      */
     private final CollisionMap collisions;
@@ -81,14 +80,10 @@ public class Level {
     /**
      * Creates a new level for the board.
      *
-     * @param board
-     *            The board for the level.
-     * @param ghosts
-     *            The ghosts on the board.
-     * @param startPositions
-     *            The squares on which players start on this board.
-     * @param collisionMap
-     *            The collection of collisions that should be handled.
+     * @param board          The board for the level.
+     * @param ghosts         The ghosts on the board.
+     * @param startPositions The squares on which players start on this board.
+     * @param collisionMap   The collection of collisions that should be handled.
      */
     public Level(Board board, List<Ghost> ghosts, List<Square> startPositions, CollisionMap collisionMap) {
         assert board != null;
@@ -101,9 +96,9 @@ public class Level {
         for (Ghost ghost : ghosts) {
             npcs.put(ghost, null);
         }
+        this.players = new HashMap<>();
         this.startSquares = startPositions;
         this.startSquareIndex = 0;
-        this.players = new ArrayList<>();
         this.collisions = collisionMap;
         this.observers = new HashSet<>();
     }
@@ -111,8 +106,7 @@ public class Level {
     /**
      * Adds an observer that will be notified when the level is won or lost.
      *
-     * @param observer
-     *            The observer that will be notified.
+     * @param observer The observer that will be notified.
      */
     public void addObserver(LevelObserver observer) {
         observers.add(observer);
@@ -121,8 +115,7 @@ public class Level {
     /**
      * Removes an observer if it was listed.
      *
-     * @param observer
-     *            The observer to be removed.
+     * @param observer The observer to be removed.
      */
     public void removeObserver(LevelObserver observer) {
         observers.remove(observer);
@@ -133,17 +126,16 @@ public class Level {
      * player can only be registered once, registering a player again will have
      * no effect.
      *
-     * @param player
-     *            The player to register.
+     * @param player The player to register.
      */
     public void registerPlayer(Player player) {
         assert player != null;
         assert !startSquares.isEmpty();
 
-        if (players.contains(player)) {
+        if (players.containsKey(player)) {
             return;
         }
-        players.add(player);
+        players.put(player, null);
         Square square = startSquares.get(startSquareIndex);
         player.occupy(square);
         startSquareIndex++;
@@ -163,10 +155,8 @@ public class Level {
      * Moves the unit into the given direction if possible and handles all
      * collisions.
      *
-     * @param unit
-     *            The unit to move.
-     * @param direction
-     *            The direction to move the unit in.
+     * @param unit      The unit to move.
+     * @param direction The direction to move the unit in.
      */
     public void move(Unit unit, Direction direction) {
         assert unit != null;
@@ -194,8 +184,7 @@ public class Level {
     }
 
     /**
-     * Starts or resumes this level, allowing movement and (re)starting the
-     * NPCs.
+     * Starts or resumes this level. The players and the ghosts start moving.
      */
     public void start() {
         synchronized (startStopLock) {
@@ -203,14 +192,14 @@ public class Level {
                 return;
             }
             startNPCs();
+            startPlayers();
             inProgress = true;
             updateObservers();
         }
     }
 
     /**
-     * Stops or pauses this level, no longer allowing any movement on the board
-     * and stopping all NPCs.
+     * Stops or pauses this level, no longer allowing any movement on the board.
      */
     public void stop() {
         synchronized (startStopLock) {
@@ -218,6 +207,7 @@ public class Level {
                 return;
             }
             stopNPCs();
+            stopPlayers();
             inProgress = false;
         }
     }
@@ -229,7 +219,7 @@ public class Level {
         for (final Ghost npc : npcs.keySet()) {
             ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
-            service.schedule(new NpcMoveTask(service, npc),npc.getInterval() / 2, TimeUnit.MILLISECONDS);
+            service.schedule(new NpcMoveTask(service, npc, this), npc.getInterval() / 2, TimeUnit.MILLISECONDS);
 
             npcs.put(npc, service);
         }
@@ -241,6 +231,30 @@ public class Level {
      */
     private void stopNPCs() {
         for (Entry<Ghost, ScheduledExecutorService> entry : npcs.entrySet()) {
+            ScheduledExecutorService schedule = entry.getValue();
+            assert schedule != null;
+            schedule.shutdownNow();
+        }
+    }
+
+    /**
+     * Starts all Players movement scheduling.
+     */
+    private void startPlayers() {
+        for (final Player player : players.keySet()) {
+            ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+
+            service.schedule(new PlayerMoveTask(service, player, this), player.getInterval() / 2, TimeUnit.MILLISECONDS);
+
+            players.put(player, service);
+        }
+    }
+
+    /**
+     * Stops all Players movement scheduling.
+     */
+    private void stopPlayers() {
+        for (Entry<Player, ScheduledExecutorService> entry : players.entrySet()) {
             ScheduledExecutorService schedule = entry.getValue();
             assert schedule != null;
             schedule.shutdownNow();
@@ -278,10 +292,10 @@ public class Level {
      * is alive.
      *
      * @return <code>true</code> if at least one of the registered players is
-     *         alive.
+     * alive.
      */
     public boolean isAnyPlayerAlive() {
-        for (Player player : players) {
+        for (Player player : players.keySet()) {
             if (player.isAlive()) {
                 return true;
             }
@@ -308,47 +322,6 @@ public class Level {
         }
         assert pellets >= 0;
         return pellets;
-    }
-
-    /**
-     * A task that moves an NPC and reschedules itself after it finished.
-     *
-     * @author Jeroen Roosen
-     */
-    private final class NpcMoveTask implements Runnable {
-
-        /**
-         * The service executing the task.
-         */
-        private final ScheduledExecutorService service;
-
-        /**
-         * The NPC to move.
-         */
-        private final Ghost npc;
-
-        /**
-         * Creates a new task.
-         *
-         * @param service
-         *            The service that executes the task.
-         * @param npc
-         *            The NPC to move.
-         */
-        NpcMoveTask(ScheduledExecutorService service, Ghost npc) {
-            this.service = service;
-            this.npc = npc;
-        }
-
-        @Override
-        public void run() {
-            Direction nextMove = npc.nextMove();
-            if (nextMove != null) {
-                move(npc, nextMove);
-            }
-            long interval = npc.getInterval();
-            service.schedule(this, interval, TimeUnit.MILLISECONDS);
-        }
     }
 
     /**

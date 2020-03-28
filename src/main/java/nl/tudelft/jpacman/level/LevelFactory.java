@@ -3,6 +3,7 @@ package nl.tudelft.jpacman.level;
 import nl.tudelft.jpacman.ConfigurationLoader;
 import nl.tudelft.jpacman.board.Board;
 import nl.tudelft.jpacman.board.Square;
+import nl.tudelft.jpacman.level.unit.Pellet;
 import nl.tudelft.jpacman.npc.Ghost;
 import nl.tudelft.jpacman.npc.ghost.GhostFactory;
 import nl.tudelft.jpacman.sprite.PacManSprites;
