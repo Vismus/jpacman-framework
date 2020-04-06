@@ -1,6 +1,5 @@
 package nl.tudelft.jpacman.level;
 
-import nl.tudelft.jpacman.ConfigurationLoader;
 import nl.tudelft.jpacman.Launcher;
 import nl.tudelft.jpacman.level.unit.Player;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,8 +13,7 @@ public class PlayerTest {
 
     @BeforeEach
     public void setUp() {
-        ConfigurationLoader.load("src/test/resources/configuration.properties");
-        launcher = new Launcher();
+        launcher = new Launcher("src/test/resources/configuration.properties");
         launcher.launch();
         player = launcher.getGame().getPlayers().get(0);
     }

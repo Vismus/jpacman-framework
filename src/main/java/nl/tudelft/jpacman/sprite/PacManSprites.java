@@ -1,17 +1,18 @@
 package nl.tudelft.jpacman.sprite;
 
+import nl.tudelft.jpacman.ConfigurationLoader;
+import nl.tudelft.jpacman.board.Direction;
+import nl.tudelft.jpacman.exceptions.PacmanConfigurationException;
+import nl.tudelft.jpacman.npc.ghost.GhostColor;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import nl.tudelft.jpacman.exceptions.PacmanConfigurationException;
-import nl.tudelft.jpacman.board.Direction;
-import nl.tudelft.jpacman.npc.ghost.GhostColor;
-
 /**
  * Sprite Store containing the classic Pac-Man sprites.
  *
- * @author Jeroen Roosen 
+ * @author Jeroen Roosen
  */
 public class PacManSprites extends SpriteStore {
 
@@ -29,27 +30,32 @@ public class PacManSprites extends SpriteStore {
     /**
      * The image size in pixels.
      */
-    private static final int SPRITE_SIZE = 16;
+    private static final int SPRITE_SIZE = Integer.parseInt(ConfigurationLoader.getProperty("sprite.pacmansprite.size"));
 
     /**
      * The amount of frames in the pacman animation.
      */
-    private static final int PACMAN_ANIMATION_FRAMES = 4;
+    private static final int PACMAN_ANIMATION_FRAMES = Integer.parseInt(ConfigurationLoader.getProperty("sprite.pacmansprite.pacman.animation.frames"));
 
     /**
      * The amount of frames in the pacman dying animation.
      */
-    private static final int PACMAN_DEATH_FRAMES = 11;
+    private static final int PACMAN_DEATH_FRAMES = Integer.parseInt(ConfigurationLoader.getProperty("sprite.pacmansprite.pacman.death.frames"));
 
     /**
      * The amount of frames in the ghost animation.
      */
-    private static final int GHOST_ANIMATION_FRAMES = 2;
+    private static final int GHOST_ANIMATION_FRAMES = Integer.parseInt(ConfigurationLoader.getProperty("sprite.pacmansprite.ghost.animation.frames"));
+
+    /**
+     * The amount of frames in the dead ghost animation.
+     */
+    private static final int GHOST_DEAD_ANIMATION_FRAMES = Integer.parseInt(ConfigurationLoader.getProperty("sprite.pacmansprite.ghost.dead.animation.frames"));
 
     /**
      * The delay between frames.
      */
-    private static final int ANIMATION_DELAY = 200;
+    private static final int ANIMATION_DELAY = Integer.parseInt(ConfigurationLoader.getProperty("sprite.pacmansprite.animation.delay"));
 
     /**
      * @return A map of animated Pac-Man sprites for all directions.
@@ -72,10 +78,8 @@ public class PacManSprites extends SpriteStore {
     /**
      * Returns a new map with animations for all directions.
      *
-     * @param resource
-     *            The resource name of the sprite.
-     * @param frames
-     *            The number of frames in this sprite.
+     * @param resource The resource name of the sprite.
+     * @param frames   The number of frames in this sprite.
      * @return The animated sprite facing the given direction.
      */
     private Map<Direction, Sprite> directionSprite(String resource, int frames) {
@@ -96,8 +100,7 @@ public class PacManSprites extends SpriteStore {
     /**
      * Returns a map of animated ghost sprites for all directions.
      *
-     * @param color
-     *            The colour of the ghost.
+     * @param color The colour of the ghost.
      * @return The Sprite for the ghost.
      */
     public Map<Direction, Sprite> getGhostSprite(GhostColor color) {
@@ -106,6 +109,33 @@ public class PacManSprites extends SpriteStore {
         String resource = "/sprite/ghost_" + color.name().toLowerCase()
             + ".png";
         return directionSprite(resource, GHOST_ANIMATION_FRAMES);
+    }
+
+    /**
+     * Returns a map of animated fleeing ghost sprites for all directions.
+     *
+     * @return The Sprite for the ghost.
+     */
+    public Map<Direction, Sprite> getFleeGhostSprite() {
+        return directionSprite("/sprite/ghost_vul_blue.png", GHOST_ANIMATION_FRAMES);
+    }
+
+    /**
+     * Returns a map of animated sprites for the ghost at the end of flee mode in all directions.
+     *
+     * @return The Sprite for the ghost.
+     */
+    public Map<Direction, Sprite> getEndingFleeGhostSprite() {
+        return directionSprite("/sprite/ghost_vul_end.png", GHOST_ANIMATION_FRAMES);
+    }
+
+    /**
+     * Returns a map of animated sprites for the dead ghost in all directions.
+     *
+     * @return The Sprite for the ghost.
+     */
+    public Map<Direction, Sprite> getDeadGhostSprites() {
+        return directionSprite("/sprite/ghost_eyes.png", GHOST_DEAD_ANIMATION_FRAMES);
     }
 
     /**
@@ -123,17 +153,28 @@ public class PacManSprites extends SpriteStore {
     }
 
     /**
-     * @return The sprite for the
+     * @return The sprite for the pellet
      */
     public Sprite getPelletSprite() {
         return loadSprite("/sprite/pellet.png");
     }
 
     /**
+     * @return The sprite for the power pellet
+     */
+    public Sprite getPowerPelletSprite() {
+        Sprite baseImage = loadSprite("/sprite/powerpellet.png");
+        Sprite powerPellet = baseImage.split(0, 0, 2 * SPRITE_SIZE, SPRITE_SIZE);
+        AnimatedSprite animation = createAnimatedSprite(powerPellet, 2, ANIMATION_DELAY, true);
+        animation.setAnimating(true);
+        return animation;
+    }
+
+    /**
      * Overloads the default sprite loading, ignoring the exception. This class
      * assumes all sprites are provided, hence the exception will be thrown as a
      * {@link RuntimeException}.
-     *
+     * <p>
      * {@inheritDoc}
      */
     @Override

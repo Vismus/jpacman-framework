@@ -1,10 +1,5 @@
 package nl.tudelft.jpacman.npc.ghost;
 
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import nl.tudelft.jpacman.ConfigurationLoader;
 import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.board.Square;
@@ -12,6 +7,8 @@ import nl.tudelft.jpacman.board.Unit;
 import nl.tudelft.jpacman.level.unit.Player;
 import nl.tudelft.jpacman.npc.Ghost;
 import nl.tudelft.jpacman.sprite.Sprite;
+
+import java.util.*;
 
 /**
  * <p>
@@ -28,7 +25,7 @@ import nl.tudelft.jpacman.sprite.Sprite;
  * </p>
  * <p>
  * <b>AI:</b> Clyde has two basic AIs, one for when he's far from Pac-Man, and
- * one for when he is near to Pac-Man. 
+ * one for when he is near to Pac-Man.
  * When Clyde is far away from Pac-Man (beyond eight grid spaces),
  * Clyde behaves very much like Blinky, trying to move to Pac-Man's exact
  * location. However, when Clyde gets within eight grid spaces of Pac-Man, he
@@ -73,10 +70,11 @@ public class Clyde extends Ghost {
     /**
      * Creates a new "Clyde", a.k.a. "Pokey".
      *
-     * @param spriteMap The sprites for this ghost.
+     * @param ghostSprites    An arraylist containing ghost sprites.
+     * @param initialPosition The initial position of the ghost.
      */
-    public Clyde(Map<Direction, Sprite> spriteMap) {
-        super(spriteMap, MOVE_INTERVAL, INTERVAL_VARIATION);
+    public Clyde(ArrayList<Map<Direction, Sprite>> ghostSprites, Square initialPosition) {
+        super(ghostSprites, MOVE_INTERVAL, INTERVAL_VARIATION, initialPosition);
     }
 
     /**
@@ -84,7 +82,7 @@ public class Clyde extends Ghost {
      *
      * <p>
      * Clyde has two basic AIs, one for when he's far from Pac-Man, and one for
-     * when he is near to Pac-Man. 
+     * when he is near to Pac-Man.
      * When Clyde is far away from Pac-Man (beyond eight grid spaces),
      * Clyde behaves very much like Blinky, trying to move to Pac-Man's exact
      * location. However, when Clyde gets within eight grid spaces of Pac-Man,

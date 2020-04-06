@@ -1,7 +1,14 @@
 package nl.tudelft.jpacman.npc.ghost;
 
+import nl.tudelft.jpacman.board.Direction;
+import nl.tudelft.jpacman.board.Square;
 import nl.tudelft.jpacman.npc.Ghost;
 import nl.tudelft.jpacman.sprite.PacManSprites;
+import nl.tudelft.jpacman.sprite.Sprite;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Factory that creates ghosts.
@@ -30,8 +37,8 @@ public class GhostFactory {
      * @return A new Blinky.
      * @see Blinky
      */
-    public Ghost createBlinky() {
-        return new Blinky(sprites.getGhostSprite(GhostColor.RED));
+    public Ghost createBlinky(Square initialPosition) {
+        return new Blinky(this.getGhostSprites(GhostColor.RED), initialPosition);
     }
 
     /**
@@ -40,8 +47,8 @@ public class GhostFactory {
      * @return A new Pinky.
      * @see Pinky
      */
-    public Ghost createPinky() {
-        return new Pinky(sprites.getGhostSprite(GhostColor.PINK));
+    public Ghost createPinky(Square initialPosition) {
+        return new Pinky(this.getGhostSprites(GhostColor.PINK), initialPosition);
     }
 
     /**
@@ -50,8 +57,8 @@ public class GhostFactory {
      * @return A new Inky.
      * @see Inky
      */
-    public Ghost createInky() {
-        return new Inky(sprites.getGhostSprite(GhostColor.CYAN));
+    public Ghost createInky(Square initialPosition) {
+        return new Inky(this.getGhostSprites(GhostColor.CYAN), initialPosition);
     }
 
     /**
@@ -60,8 +67,8 @@ public class GhostFactory {
      * @return A new Clyde.
      * @see Clyde
      */
-    public Ghost createClyde() {
-        return new Clyde(sprites.getGhostSprite(GhostColor.ORANGE));
+    public Ghost createClyde(Square initialPosition) {
+        return new Clyde(this.getGhostSprites(GhostColor.ORANGE), initialPosition);
     }
 
     /**
@@ -69,7 +76,19 @@ public class GhostFactory {
      *
      * @return A random ghost
      */
-    public Ghost createRandomGhost() {
-        return new RandomGhost(sprites.getGhostSprite(GhostColor.RED));
+    public Ghost createRandomGhost(Square initialPosition) {
+        return new RandomGhost(this.getGhostSprites(GhostColor.RED), initialPosition);
+    }
+
+    /**
+     * Build an arraylist containing all the sprites for a ghost.
+     *
+     * @param color The color of the ghost
+     * @return An arraylist containing the ghost sprites
+     */
+    private ArrayList<Map<Direction, Sprite>> getGhostSprites(GhostColor color) {
+        ArrayList<Map<Direction, Sprite>> ghostSprites = new ArrayList<>();
+        Collections.addAll(ghostSprites, sprites.getGhostSprite(color), sprites.getFleeGhostSprite(), sprites.getEndingFleeGhostSprite(), sprites.getDeadGhostSprites());
+        return ghostSprites;
     }
 }

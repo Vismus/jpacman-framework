@@ -3,6 +3,7 @@ package nl.tudelft.jpacman.board;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
+import nl.tudelft.jpacman.ConfigurationLoader;
 import nl.tudelft.jpacman.common.BasicGround;
 import nl.tudelft.jpacman.sprite.PacManSprites;
 
@@ -33,6 +34,7 @@ class BoardFactoryTest {
      */
     @BeforeEach
     void setUp() {
+        ConfigurationLoader.load("src/test/resources/configuration.properties");
         PacManSprites sprites = mock(PacManSprites.class);
         factory = new BoardFactory(sprites);
 

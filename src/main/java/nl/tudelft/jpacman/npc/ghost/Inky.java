@@ -8,6 +8,7 @@ import nl.tudelft.jpacman.level.unit.Player;
 import nl.tudelft.jpacman.npc.Ghost;
 import nl.tudelft.jpacman.sprite.Sprite;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -50,10 +51,11 @@ public class Inky extends Ghost {
     /**
      * Creates a new "Inky".
      *
-     * @param spriteMap The sprites for this ghost.
+     * @param ghostSprites    An arraylist containing ghost sprites.
+     * @param initialPosition The initial position of the ghost.
      */
-    public Inky(Map<Direction, Sprite> spriteMap) {
-        super(spriteMap, MOVE_INTERVAL, INTERVAL_VARIATION);
+    public Inky(ArrayList<Map<Direction, Sprite>> ghostSprites, Square initialPosition) {
+        super(ghostSprites, MOVE_INTERVAL, INTERVAL_VARIATION, initialPosition);
     }
 
     /**

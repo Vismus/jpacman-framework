@@ -26,7 +26,12 @@ public class LevelFactory {
     /**
      * The default value of a pellet.
      */
-    private static final int PELLET_VALUE = 10;
+    private static final int PELLET_VALUE = Integer.parseInt(ConfigurationLoader.getProperty("level.factory.pellet.value"));
+
+    /**
+     * The default value of a power pellet.
+     */
+    private static final int POWER_PELLET_VALUE = Integer.parseInt(ConfigurationLoader.getProperty("level.factory.power.pellet.value"));
 
     /**
      * The sprite store that provides sprites for units.
@@ -64,31 +69,29 @@ public class LevelFactory {
      * @return A new level for the board.
      */
     public Level createLevel(Board board, List<Ghost> ghosts, List<Square> startPositions) {
-
-        CollisionMap collisionMap = new DefaultPlayerInteractionMap();
-
-        return new Level(board, ghosts, startPositions, collisionMap);
+        return new Level(board, ghosts, startPositions);
     }
 
     /**
      * Creates a new ghost.
      *
+     * @param position The initial position of the ghost
      * @return The new ghost.
      */
-    Ghost createGhost() {
+    Ghost createGhost(Square position) {
         ghostIndex++;
         ghostIndex %= GHOSTS;
         switch (ghostIndex) {
             case BLINKY:
-                return ghostFact.createBlinky();
+                return ghostFact.createBlinky(position);
             case INKY:
-                return ghostFact.createInky();
+                return ghostFact.createInky(position);
             case PINKY:
-                return ghostFact.createPinky();
+                return ghostFact.createPinky(position);
             case CLYDE:
-                return ghostFact.createClyde();
+                return ghostFact.createClyde(position);
             default:
-                return ghostFact.createRandomGhost();
+                return ghostFact.createRandomGhost(position);
         }
     }
 
@@ -98,6 +101,15 @@ public class LevelFactory {
      * @return The new pellet.
      */
     public Pellet createPellet() {
-        return new Pellet(PELLET_VALUE, sprites.getPelletSprite());
+        return new Pellet(false, PELLET_VALUE, sprites.getPelletSprite());
+    }
+
+    /**
+     * Creates a new power pellet.
+     *
+     * @return The new power pellet.
+     */
+    public Pellet createPowerPellet() {
+        return new Pellet(true, POWER_PELLET_VALUE, sprites.getPowerPelletSprite());
     }
 }

@@ -8,6 +8,7 @@ import nl.tudelft.jpacman.level.unit.Player;
 import nl.tudelft.jpacman.npc.Ghost;
 import nl.tudelft.jpacman.sprite.Sprite;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 
@@ -55,12 +56,11 @@ public class Blinky extends Ghost {
     /**
      * Creates a new "Blinky", a.k.a. "Shadow".
      *
-     * @param spriteMap The sprites for this ghost.
+     * @param ghostSprites    An arraylist containing ghost sprites.
+     * @param initialPosition The initial position of the ghost.
      */
-    // TODO Blinky should speed up when there are a few pellets left, but he
-    // has no way to find out how many there are.
-    public Blinky(Map<Direction, Sprite> spriteMap) {
-        super(spriteMap, MOVE_INTERVAL, INTERVAL_VARIATION);
+    public Blinky(ArrayList<Map<Direction, Sprite>> ghostSprites, Square initialPosition) {
+        super(ghostSprites, MOVE_INTERVAL, INTERVAL_VARIATION, initialPosition);
     }
 
     /**

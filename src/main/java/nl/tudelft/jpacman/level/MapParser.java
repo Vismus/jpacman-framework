@@ -120,8 +120,13 @@ public class MapParser {
                 grid[x][y] = pelletSquare;
                 levelCreator.createPellet().occupy(pelletSquare);
                 break;
+            case 'o':
+                Square powerPelletSquare = boardCreator.createGround();
+                grid[x][y] = powerPelletSquare;
+                levelCreator.createPowerPellet().occupy(powerPelletSquare);
+                break;
             case 'G':
-                Square ghostSquare = makeGhostSquare(ghosts, levelCreator.createGhost());
+                Square ghostSquare = makeGhostSquare(ghosts);
                 grid[x][y] = ghostSquare;
                 break;
             case 'P':
@@ -139,11 +144,11 @@ public class MapParser {
      * and appends the placed ghost into the ghost list.
      *
      * @param ghosts all the ghosts in the level so far, the new ghost will be appended
-     * @param ghost the newly created ghost to be placed
      * @return a square with the ghost on it.
      */
-    protected Square makeGhostSquare(List<Ghost> ghosts, Ghost ghost) {
+    protected Square makeGhostSquare(List<Ghost> ghosts) {
         Square ghostSquare = boardCreator.createGround();
+        Ghost ghost = levelCreator.createGhost(ghostSquare);
         ghosts.add(ghost);
         ghost.occupy(ghostSquare);
         return ghostSquare;

@@ -2,9 +2,11 @@ package nl.tudelft.jpacman.npc.ghost;
 
 import nl.tudelft.jpacman.ConfigurationLoader;
 import nl.tudelft.jpacman.board.Direction;
+import nl.tudelft.jpacman.board.Square;
 import nl.tudelft.jpacman.npc.Ghost;
 import nl.tudelft.jpacman.sprite.Sprite;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,10 +32,11 @@ public class RandomGhost extends Ghost {
     /**
      * Creates a new random ghost.
      *
-     * @param ghostSprite The sprite for the ghost.
+     * @param ghostSprites    An arraylist containing ghost sprites.
+     * @param initialPosition The initial position of the ghost.
      */
-    RandomGhost(Map<Direction, Sprite> ghostSprite) {
-        super(ghostSprite, MOVE_INTERVAL, INTERVAL_VARIATION);
+    public RandomGhost(ArrayList<Map<Direction, Sprite>> ghostSprites, Square initialPosition) {
+        super(ghostSprites, MOVE_INTERVAL, INTERVAL_VARIATION, initialPosition);
     }
 
     @Override

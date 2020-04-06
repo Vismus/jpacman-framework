@@ -25,12 +25,18 @@ import java.util.List;
 @SuppressWarnings("PMD.TooManyMethods")
 public class Launcher {
 
-    private static final PacManSprites SPRITE_STORE = new PacManSprites();
+    private static PacManSprites SPRITE_STORE;
 
-    private String levelMap = ConfigurationLoader.getProperty("level.map");
+    private String levelMap;
 
     private PacManUI pacManUI;
     private Game game;
+
+    public Launcher(String configurationPath) {
+        ConfigurationLoader.load(configurationPath);
+        levelMap = ConfigurationLoader.getProperty("level.map");
+        SPRITE_STORE =  new PacManSprites();
+    }
 
     /**
      * @return The game object this launcher will start when {@link #launch()}
@@ -198,7 +204,6 @@ public class Launcher {
      * @param args The command line arguments - which are ignored.
      */
     public static void main(String[] args) {
-        ConfigurationLoader.load("src/main/resources/configuration.properties");
-        new Launcher().launch();
+        new Launcher("src/main/resources/configuration.properties").launch();
     }
 }

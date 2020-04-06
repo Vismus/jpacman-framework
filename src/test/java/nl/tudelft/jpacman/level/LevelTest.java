@@ -2,11 +2,20 @@ package nl.tudelft.jpacman.level;
 
 import com.google.common.collect.Lists;
 import nl.tudelft.jpacman.board.Board;
+import nl.tudelft.jpacman.board.BoardFactory;
+import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.board.Square;
 import nl.tudelft.jpacman.level.unit.Player;
 import nl.tudelft.jpacman.npc.Ghost;
+import nl.tudelft.jpacman.npc.ghost.Blinky;
+import nl.tudelft.jpacman.npc.ghost.GhostFactory;
+import nl.tudelft.jpacman.sprite.AnimatedSprite;
+import nl.tudelft.jpacman.sprite.PacManSprites;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -28,27 +37,24 @@ class LevelTest {
     /**
      * An NPC on this level.
      */
-    private final Ghost ghost = mock(Ghost.class);
+    private Ghost ghost;
 
     /**
      * Starting position 1.
      */
-    private final Square square1 = mock(Square.class);
+    private Square square1;
 
     /**
      * Starting position 2.
      */
-    private final Square square2 = mock(Square.class);
+    private Square square2;
+
+    private MapParser parser;
 
     /**
      * The board for this level.
      */
-    private final Board board = mock(Board.class);
-
-    /**
-     * The collision map.
-     */
-    private final CollisionMap collisions = mock(CollisionMap.class);
+    private Board board;
 
     /**
      * Sets up the level with the default board, a single NPC and a starting
@@ -56,9 +62,17 @@ class LevelTest {
      */
     @BeforeEach
     void setUp() {
-        final long defaultInterval = 100L;
-        level = new Level(board, Lists.newArrayList(ghost), Lists.newArrayList(square1, square2), collisions);
-        when(ghost.getInterval()).thenReturn(defaultInterval);
+        PacManSprites sprites = new PacManSprites();
+        parser = new MapParser(new LevelFactory(sprites, new GhostFactory(sprites)), new BoardFactory(sprites));
+        board = parser
+            .parseMap(Lists.newArrayList("#####", "# o #", "#####"))
+            .getBoard();
+        square1 = board.squareAt(1, 1);
+        square2 = board.squareAt(3, 1);
+        ghost = new Blinky(mock(ArrayList.class), square2);
+        ghost.occupy(square2);
+
+        level = new Level(board, Lists.newArrayList(ghost), Lists.newArrayList(square1, square2));
     }
 
     /**
@@ -149,5 +163,43 @@ class LevelTest {
         level.registerPlayer(p2);
         level.registerPlayer(p3);
         verify(p3).occupy(square1);
+    }
+
+    /**
+     * Verifies that the function counts the number of pellets.
+     */
+    @Test
+    void testRemainingPellet() {
+        assertThat(level.remainingPellets(true)).isEqualTo(1);
+        assertThat(level.remainingPellets(false)).isEqualTo(0);
+    }
+
+    /**
+     * Verifies that pacman is eating a powerPellet.
+     */
+    @Test
+    void eatPowerPellet() {
+        Player p = new Player(mock(Map.class), mock(AnimatedSprite.class));
+        level.registerPlayer(p);
+        level.start();
+        level.move(p, Direction.EAST);
+        assertThat(level.getGameMode()).isEqualTo((byte) 1);
+        assertThat(level.remainingPellets(true)).isEqualTo(0);
+        assertThat(ghost.getGameMode()).isEqualTo((byte) 1);
+    }
+
+    /**
+     * Verifies that pacman can eat a ghost in hunting mode
+     */
+    @Test
+    void chaseGhost() {
+        Player p = new Player(mock(Map.class), mock(AnimatedSprite.class));
+        level.registerPlayer(p);
+        level.start();
+        level.move(p, Direction.EAST);
+        level.move(p, Direction.EAST);
+        assertThat(p.getSquare()).isEqualTo(ghost.getSquare());
+        assertThat(ghost.isAlive()).isFalse();
+        assertThat(p.isAlive()).isTrue();
     }
 }

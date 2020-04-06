@@ -3,13 +3,10 @@ package nl.tudelft.jpacman.npc;
 import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.board.Square;
 import nl.tudelft.jpacman.board.Unit;
+import nl.tudelft.jpacman.npc.ghost.Navigation;
 import nl.tudelft.jpacman.sprite.Sprite;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 /**
  * A non-player unit.
@@ -18,9 +15,9 @@ import java.util.Random;
  */
 public abstract class Ghost extends Unit {
     /**
-     * The sprite map, one sprite for each direction.
+     * The default sprite map, one sprite for each direction.
      */
-    private final Map<Direction, Sprite> sprites;
+    private final ArrayList<Map<Direction, Sprite>> ghostSprites;
 
     /**
      * The base move interval of the ghost.
@@ -33,6 +30,22 @@ public abstract class Ghost extends Unit {
     private final int intervalVariation;
 
     /**
+     * <code>true</code> iff this ghost is alive.
+     */
+    private boolean alive;
+
+    /**
+     * Initial square of the ghost.
+     */
+    private final Square initialPosition;
+
+    /**
+     * The ghost's current game mode. It only serves to assign sprites.
+     */
+    private byte gameMode;
+
+
+    /**
      * Calculates the next move for this unit and returns the direction to move
      * in.
      * <p>
@@ -42,7 +55,13 @@ public abstract class Ghost extends Unit {
      * be devised.
      */
     public Direction nextMove() {
-        return nextAiMove().orElseGet(this::randomMove);
+        if (!this.isAlive()) {
+            return Navigation.getNextDirection(this.getSquare(), this.getInitialPosition(), this).orElseGet(this::randomMove);
+        } else if (gameMode != 0) {
+            return this.randomMove();
+        } else {
+            return nextAiMove().orElseGet(this::randomMove);
+        }
     }
 
     /**
@@ -56,19 +75,74 @@ public abstract class Ghost extends Unit {
     /**
      * Creates a new ghost.
      *
-     * @param spriteMap         The sprites for every direction.
+     * @param ghostSprites      An arraylist containing ghost sprites.
      * @param moveInterval      The base interval of movement.
      * @param intervalVariation The variation of the interval.
+     * @param initialPosition   The initial square of the ghost.
      */
-    protected Ghost(Map<Direction, Sprite> spriteMap, int moveInterval, int intervalVariation) {
-        this.sprites = spriteMap;
+    protected Ghost(ArrayList<Map<Direction, Sprite>> ghostSprites, int moveInterval, int intervalVariation, Square initialPosition) {
+        this.ghostSprites = ghostSprites;
         this.intervalVariation = intervalVariation;
         this.moveInterval = moveInterval;
+        this.initialPosition = initialPosition;
+        this.gameMode = 0;
+        this.alive = true;
+    }
+
+    /**
+     * Indicates if the ghost is in flee mode.
+     *
+     * @return the gameMode
+     */
+    public byte getGameMode() {
+        return gameMode;
+    }
+
+    /**
+     * Set the gamemode of the ghost.
+     *
+     * @param gameMode 0: ghosts chase pacman
+     *                 1: ghosts are vulnerable
+     *                 2: ghosts will soon be hunting again
+     */
+    public void setGameMode(byte gameMode) {
+        this.gameMode = gameMode;
+    }
+
+    /**
+     * Returns the ghost's initial position.
+     *
+     * @return The ghost's initial position.
+     */
+    public Square getInitialPosition() {
+        return this.initialPosition;
+    }
+
+    /**
+     * Returns whether this ghost is alive or not.
+     *
+     * @return <code>true</code> iff the ghost is alive.
+     */
+    public boolean isAlive() {
+        return alive;
+    }
+
+    /**
+     * Sets whether this ghost is alive or not.
+     *
+     * @param isAlive <code>true</code> iff this ghost is alive.
+     */
+    public void setAlive(boolean isAlive) {
+        this.alive = isAlive;
     }
 
     @Override
     public Sprite getSprite() {
-        return sprites.get(getDirection());
+        if (this.isAlive()) {
+            return this.ghostSprites.get(this.gameMode).get(this.getDirection());
+        } else {
+            return this.ghostSprites.get(3).get(this.getDirection());
+        }
     }
 
     /**
@@ -77,10 +151,16 @@ public abstract class Ghost extends Unit {
      * @return The suggested delay between moves in milliseconds.
      */
     public long getInterval() {
-        if(this.intervalVariation == 0) {
-            return this.moveInterval;
+        int interval = this.moveInterval;
+        if (this.gameMode != 0) {
+            interval *= 2;
         }
-        return this.moveInterval + new Random().nextInt(this.intervalVariation);
+
+        if (this.intervalVariation == 0) {
+            return interval;
+        } else {
+            return interval + new Random().nextInt(this.intervalVariation);
+        }
     }
 
     /**

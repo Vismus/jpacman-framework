@@ -4,17 +4,15 @@ import nl.tudelft.jpacman.board.Board;
 import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.board.Square;
 import nl.tudelft.jpacman.board.Unit;
-import nl.tudelft.jpacman.level.movetask.NpcMoveTask;
-import nl.tudelft.jpacman.level.movetask.PlayerMoveTask;
+import nl.tudelft.jpacman.level.task.ExitHuntingModeTask;
+import nl.tudelft.jpacman.level.task.GhostMoveTask;
+import nl.tudelft.jpacman.level.task.PlayerMoveTask;
+import nl.tudelft.jpacman.level.task.ScheduledTaskService;
 import nl.tudelft.jpacman.level.unit.Pellet;
 import nl.tudelft.jpacman.level.unit.Player;
 import nl.tudelft.jpacman.npc.Ghost;
 
 import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A level of Pac-Man. A level consists of the board with the players and the
@@ -42,14 +40,24 @@ public class Level {
     private final Object startStopLock = new Object();
 
     /**
-     * The NPCs of this level and, if they are running, their schedules.
+     * The NPCs of this level their moving schedules.
      */
-    private final Map<Ghost, ScheduledExecutorService> npcs;
+    private final Map<Ghost, ScheduledTaskService> npcsMoveSchedules;
+
+    /**
+     * The NPCs of this level their reborn schedules.
+     */
+    private final Map<Ghost, ScheduledTaskService> npcsRebornSchedules;
 
     /**
      * The players on this level and, if they are running, their schedules.
      */
-    private final Map<Player, ScheduledExecutorService> players;
+    private final Map<Player, ScheduledTaskService> playersMoveSchedules;
+
+    /**
+     * The ScheduledTaskService allowing to gradually leave the hunting mode.
+     */
+    private ScheduledTaskService exitHuntingModeService;
 
     /**
      * <code>true</code> iff this level is currently in progress, i.e. players
@@ -78,29 +86,42 @@ public class Level {
     private final Set<LevelObserver> observers;
 
     /**
+     * The current game mode of the level.
+     * 0: ghosts chase pacman
+     * 1: pacman chase vulnerable ghosts
+     * 2: pacman chase vulnerable ghosts but it will end soon.
+     */
+    private byte gameMode;
+
+    /**
      * Creates a new level for the board.
      *
      * @param board          The board for the level.
      * @param ghosts         The ghosts on the board.
      * @param startPositions The squares on which players start on this board.
-     * @param collisionMap   The collection of collisions that should be handled.
      */
-    public Level(Board board, List<Ghost> ghosts, List<Square> startPositions, CollisionMap collisionMap) {
+    public Level(Board board, List<Ghost> ghosts, List<Square> startPositions) {
         assert board != null;
         assert ghosts != null;
         assert startPositions != null;
 
         this.board = board;
         this.inProgress = false;
-        this.npcs = new HashMap<>();
+        this.npcsMoveSchedules = new HashMap<>();
+        this.npcsRebornSchedules = new HashMap<>();
         for (Ghost ghost : ghosts) {
-            npcs.put(ghost, null);
+            ScheduledTaskService moveService = new ScheduledTaskService();
+            moveService.schedule(new GhostMoveTask(moveService, ghost, this), ghost.getInterval() / 2, false);
+            npcsMoveSchedules.put(ghost, moveService);
+
+            npcsRebornSchedules.put(ghost, new ScheduledTaskService());
         }
-        this.players = new HashMap<>();
+        this.playersMoveSchedules = new HashMap<>();
         this.startSquares = startPositions;
         this.startSquareIndex = 0;
-        this.collisions = collisionMap;
+        this.collisions = new DefaultPlayerInteractionMap(this);
         this.observers = new HashSet<>();
+        this.exitHuntingModeService = new ScheduledTaskService();
     }
 
     /**
@@ -122,6 +143,61 @@ public class Level {
     }
 
     /**
+     * Accessor of the gamemode of this level
+     *
+     * @return the game mode
+     * 0: ghosts chase pacman
+     * 1: pacman chase vulnerable ghosts
+     * 2: pacman chase vulnerable ghosts but it will end soon.
+     */
+    public byte getGameMode() {
+        return gameMode;
+    }
+
+    /**
+     * Set the game mode of this level
+     *
+     * @param newGameMode 0: ghosts chase pacman
+     *                    1: pacman chase vulnerable ghosts
+     *                    2: pacman chase vulnerable ghosts but it will end soon.
+     */
+    public void setGameMode(byte newGameMode) {
+        if (newGameMode == 0) {
+            stopHuntingMode();
+        } else if (newGameMode == 1) {
+            stopHuntingMode();
+            startHuntingMode();
+        }
+        this.gameMode = newGameMode;
+    }
+
+    /**
+     * Stop the task of gradual exit from hunting mode.
+     */
+    private void stopHuntingMode() {
+        this.exitHuntingModeService.cancelTask();
+        for (Player player : this.getPlayers()) {
+            player.setConsecutiveKills(0);
+        }
+    }
+
+    /**
+     * Start the task of gradual exit from hunting mode.
+     * If there are 2 power pellets or less, the hunting mode time is reduced by 2 seconds.
+     */
+    private void startHuntingMode() {
+        if (this.remainingPellets(true) > 2) {
+            this.exitHuntingModeService.schedule(new ExitHuntingModeTask(this.exitHuntingModeService, this), 7000, true);
+        } else {
+            this.exitHuntingModeService.schedule(new ExitHuntingModeTask(this.exitHuntingModeService, this), 5000, true);
+        }
+        for (Ghost npc : this.getGhosts()) {
+            npc.setAlive(true);
+            npc.setGameMode((byte) 1);
+        }
+    }
+
+    /**
      * Registers a player on this level, assigning him to a starting position. A
      * player can only be registered once, registering a player again will have
      * no effect.
@@ -132,10 +208,12 @@ public class Level {
         assert player != null;
         assert !startSquares.isEmpty();
 
-        if (players.containsKey(player)) {
+        if (playersMoveSchedules.containsKey(player)) {
             return;
         }
-        players.put(player, null);
+        ScheduledTaskService service = new ScheduledTaskService();
+        service.schedule(new PlayerMoveTask(service, player, this), player.getInterval() / 2, false);
+        playersMoveSchedules.put(player, service);
         Square square = startSquares.get(startSquareIndex);
         player.occupy(square);
         startSquareIndex++;
@@ -159,10 +237,6 @@ public class Level {
      * @param direction The direction to move the unit in.
      */
     public void move(Unit unit, Direction direction) {
-        assert unit != null;
-        assert direction != null;
-        assert unit.hasSquare();
-
         if (!isInProgress()) {
             return;
         }
@@ -193,6 +267,7 @@ public class Level {
             }
             startNPCs();
             startPlayers();
+            this.exitHuntingModeService.resume();
             inProgress = true;
             updateObservers();
         }
@@ -208,57 +283,67 @@ public class Level {
             }
             stopNPCs();
             stopPlayers();
+            this.exitHuntingModeService.suspend();
             inProgress = false;
         }
     }
 
     /**
-     * Starts all NPC movement scheduling.
+     * Starts all NPC scheduling.
      */
     private void startNPCs() {
-        for (final Ghost npc : npcs.keySet()) {
-            ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-
-            service.schedule(new NpcMoveTask(service, npc, this), npc.getInterval() / 2, TimeUnit.MILLISECONDS);
-
-            npcs.put(npc, service);
-        }
+        this.npcsMoveSchedules.values().forEach(ScheduledTaskService::resume);
+        this.npcsRebornSchedules.values().forEach(ScheduledTaskService::resume);
     }
 
     /**
-     * Stops all NPC movement scheduling and interrupts any movements being
-     * executed.
+     * Stops all NPC scheduling
      */
     private void stopNPCs() {
-        for (Entry<Ghost, ScheduledExecutorService> entry : npcs.entrySet()) {
-            ScheduledExecutorService schedule = entry.getValue();
-            assert schedule != null;
-            schedule.shutdownNow();
-        }
+        this.npcsMoveSchedules.values().forEach(ScheduledTaskService::suspend);
+        this.npcsRebornSchedules.values().forEach(ScheduledTaskService::suspend);
     }
 
     /**
      * Starts all Players movement scheduling.
      */
     private void startPlayers() {
-        for (final Player player : players.keySet()) {
-            ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-
-            service.schedule(new PlayerMoveTask(service, player, this), player.getInterval() / 2, TimeUnit.MILLISECONDS);
-
-            players.put(player, service);
-        }
+        this.playersMoveSchedules.values().forEach(ScheduledTaskService::resume);
     }
 
     /**
      * Stops all Players movement scheduling.
      */
     private void stopPlayers() {
-        for (Entry<Player, ScheduledExecutorService> entry : players.entrySet()) {
-            ScheduledExecutorService schedule = entry.getValue();
-            assert schedule != null;
-            schedule.shutdownNow();
-        }
+        this.playersMoveSchedules.values().forEach(ScheduledTaskService::suspend);
+    }
+
+    /**
+     * Accessor of all the ghosts of the level.
+     *
+     * @return A set of ghosts
+     */
+    public Set<Ghost> getGhosts() {
+        return npcsMoveSchedules.keySet();
+    }
+
+    /**
+     * Accessor of all the players of the level.
+     *
+     * @return A set of players
+     */
+    public Set<Player> getPlayers() {
+        return playersMoveSchedules.keySet();
+    }
+
+    /**
+     * Defines the rebirth of a ghost after a certain delay.
+     *
+     * @param ghost The ghost to be reborn.
+     * @param delay The delay
+     */
+    public void scheduleReborn(Ghost ghost, long delay) {
+        this.npcsRebornSchedules.get(ghost).schedule(() -> ghost.setAlive(true), delay, true);
     }
 
     /**
@@ -280,7 +365,7 @@ public class Level {
                 observer.levelLost();
             }
         }
-        if (remainingPellets() == 0) {
+        if (remainingPellets(false) == 0) {
             for (LevelObserver observer : observers) {
                 observer.levelWon();
             }
@@ -295,7 +380,7 @@ public class Level {
      * alive.
      */
     public boolean isAnyPlayerAlive() {
-        for (Player player : players.keySet()) {
+        for (Player player : playersMoveSchedules.keySet()) {
             if (player.isAlive()) {
                 return true;
             }
@@ -306,21 +391,23 @@ public class Level {
     /**
      * Counts the pellets remaining on the board.
      *
+     * @param powerPellet True to count the number of remaining power pellets false for simple pellets
      * @return The amount of pellets remaining on the board.
      */
-    public int remainingPellets() {
+    public int remainingPellets(boolean powerPellet) {
         Board board = getBoard();
         int pellets = 0;
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
                 for (Unit unit : board.squareAt(x, y).getOccupants()) {
                     if (unit instanceof Pellet) {
-                        pellets++;
+                        if (((Pellet) unit).isPowerPellet() == powerPellet) {
+                            pellets++;
+                        }
                     }
                 }
             }
         }
-        assert pellets >= 0;
         return pellets;
     }
 

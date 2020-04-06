@@ -1,17 +1,17 @@
 package nl.tudelft.jpacman.level.unit;
 
-import java.util.Map;
-
 import nl.tudelft.jpacman.ConfigurationLoader;
 import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.board.Unit;
 import nl.tudelft.jpacman.sprite.AnimatedSprite;
 import nl.tudelft.jpacman.sprite.Sprite;
 
+import java.util.Map;
+
 /**
  * A player operated unit in our game.
  *
- * @author Jeroen Roosen 
+ * @author Jeroen Roosen
  */
 public class Player extends Unit {
 
@@ -36,6 +36,11 @@ public class Player extends Unit {
     private boolean alive;
 
     /**
+     * Integer indicating the number of successive kills during hunting mode.
+     */
+    private int consecutiveKills;
+
+    /**
      * The base movement interval.
      */
     private static final int MOVE_INTERVAL = Integer.parseInt(ConfigurationLoader.getProperty("player.move.interval"));
@@ -43,16 +48,15 @@ public class Player extends Unit {
     /**
      * Creates a new player with a score of 0 points.
      *
-     * @param spriteMap
-     *            A map containing a sprite for this player for every direction.
-     * @param deathAnimation
-     *            The sprite to be shown when this player dies.
+     * @param spriteMap      A map containing a sprite for this player for every direction.
+     * @param deathAnimation The sprite to be shown when this player dies.
      */
     public Player(Map<Direction, Sprite> spriteMap, AnimatedSprite deathAnimation) {
         this.score = 0;
         this.alive = true;
         this.sprites = spriteMap;
         this.deathSprite = deathAnimation;
+        this.consecutiveKills = 0;
         deathSprite.setAnimating(false);
     }
 
@@ -66,10 +70,27 @@ public class Player extends Unit {
     }
 
     /**
+     * Accessor for the number of consecutive kills during hunting mode.
+     *
+     * @return The number of consecutive kills
+     */
+    public int getConsecutiveKills() {
+        return this.consecutiveKills;
+    }
+
+    /**
+     * Mutator for the number of consecutive kills during hunting mode.
+     *
+     * @param consecutiveKills The new number of consecutive kills
+     */
+    public void setConsecutiveKills(int consecutiveKills) {
+        this.consecutiveKills = consecutiveKills;
+    }
+
+    /**
      * Sets whether this player is alive or not.
      *
-     * @param isAlive
-     *            <code>true</code> iff this player is alive.
+     * @param isAlive <code>true</code> iff this player is alive.
      */
     public void setAlive(boolean isAlive) {
         if (isAlive) {
@@ -90,8 +111,13 @@ public class Player extends Unit {
         return score;
     }
 
+    /**
+     * Returns the player's movement interval
+     *
+     * @return The player's movement interval
+     */
     public int getInterval() {
-        return this.MOVE_INTERVAL;
+        return MOVE_INTERVAL;
     }
 
     @Override
@@ -105,9 +131,8 @@ public class Player extends Unit {
     /**
      * Adds points to the score of this player.
      *
-     * @param points
-     *            The amount of points to add to the points this player already
-     *            has.
+     * @param points The amount of points to add to the points this player already
+     *               has.
      */
     public void addPoints(int points) {
         score += points;
