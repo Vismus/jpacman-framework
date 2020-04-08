@@ -5,7 +5,10 @@ import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.exceptions.PacmanConfigurationException;
 import nl.tudelft.jpacman.game.Game;
 import nl.tudelft.jpacman.game.GameFactory;
-import nl.tudelft.jpacman.level.*;
+import nl.tudelft.jpacman.level.Level;
+import nl.tudelft.jpacman.level.LevelFactory;
+import nl.tudelft.jpacman.level.MapParser;
+import nl.tudelft.jpacman.level.PlayerFactory;
 import nl.tudelft.jpacman.level.unit.Player;
 import nl.tudelft.jpacman.npc.ghost.GhostFactory;
 import nl.tudelft.jpacman.sprite.PacManSprites;
@@ -25,17 +28,15 @@ import java.util.List;
 @SuppressWarnings("PMD.TooManyMethods")
 public class Launcher {
 
-    private static PacManSprites SPRITE_STORE;
-
+    private PacManSprites spriteStore;
     private String levelMap;
-
     private PacManUI pacManUI;
     private Game game;
 
     public Launcher(String configurationPath) {
         ConfigurationLoader.load(configurationPath);
         levelMap = ConfigurationLoader.getProperty("level.map");
-        SPRITE_STORE =  new PacManSprites();
+        spriteStore = new PacManSprites();
     }
 
     /**
@@ -112,7 +113,7 @@ public class Launcher {
      * @return The default {@link PacManSprites}.
      */
     protected PacManSprites getSpriteStore() {
-        return SPRITE_STORE;
+        return spriteStore;
     }
 
     /**
@@ -158,6 +159,7 @@ public class Launcher {
 
     /**
      * Changes the direction of movement of the unit.
+     *
      * @param direction The new direction to adopt
      * @return An action that can be executed
      */
