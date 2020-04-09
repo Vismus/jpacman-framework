@@ -3,6 +3,7 @@ package nl.tudelft.jpacman.sprite;
 import nl.tudelft.jpacman.ConfigurationLoader;
 import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.exceptions.PacmanConfigurationException;
+import nl.tudelft.jpacman.level.FruitType;
 import nl.tudelft.jpacman.npc.ghost.GhostColor;
 
 import java.io.IOException;
@@ -168,6 +169,14 @@ public class PacManSprites extends SpriteStore {
         AnimatedSprite animation = createAnimatedSprite(powerPellet, 2, ANIMATION_DELAY, true);
         animation.setAnimating(true);
         return animation;
+    }
+
+    public Sprite getFruit(FruitType type) {
+        assert type != null;
+
+        String resource = "/sprite/" + type.name().toLowerCase() + ".png";
+
+        return loadSprite(resource);
     }
 
     /**

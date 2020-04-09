@@ -3,6 +3,7 @@ package nl.tudelft.jpacman.level;
 import nl.tudelft.jpacman.ConfigurationLoader;
 import nl.tudelft.jpacman.board.Board;
 import nl.tudelft.jpacman.board.Square;
+import nl.tudelft.jpacman.level.unit.Fruit;
 import nl.tudelft.jpacman.level.unit.Pellet;
 import nl.tudelft.jpacman.npc.Ghost;
 import nl.tudelft.jpacman.npc.ghost.GhostFactory;
@@ -49,15 +50,21 @@ public class LevelFactory {
     private final GhostFactory ghostFact;
 
     /**
+     * The factory providing the fruits.
+     */
+    private final FruitFactory fruitFactory;
+
+    /**
      * Creates a new level factory.
      *
      * @param spriteStore  The sprite store providing the sprites for units.
      * @param ghostFactory The factory providing ghosts.
      */
-    public LevelFactory(PacManSprites spriteStore, GhostFactory ghostFactory) {
+    public LevelFactory(PacManSprites spriteStore, GhostFactory ghostFactory, FruitFactory fruitFactory) {
         this.sprites = spriteStore;
         this.ghostIndex = -1;
         this.ghostFact = ghostFactory;
+        this.fruitFactory = fruitFactory;
     }
 
     /**
@@ -68,8 +75,8 @@ public class LevelFactory {
      * @param startPositions A list of squares from which players may start the game.
      * @return A new level for the board.
      */
-    public Level createLevel(Board board, List<Ghost> ghosts, List<Square> startPositions) {
-        return new Level(board, ghosts, startPositions);
+    public Level createLevel(Board board, List<Ghost> ghosts, List<Square> startPositions, List<Square> fruitPositions) {
+        return new Level(board, ghosts, startPositions, fruitPositions, fruitFactory);
     }
 
     /**

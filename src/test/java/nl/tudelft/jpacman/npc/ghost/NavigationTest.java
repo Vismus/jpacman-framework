@@ -2,6 +2,7 @@ package nl.tudelft.jpacman.npc.ghost;
 
 import com.google.common.collect.Lists;
 import nl.tudelft.jpacman.board.*;
+import nl.tudelft.jpacman.level.FruitFactory;
 import nl.tudelft.jpacman.level.LevelFactory;
 import nl.tudelft.jpacman.level.MapParser;
 import nl.tudelft.jpacman.level.unit.Pellet;
@@ -36,7 +37,7 @@ class NavigationTest {
     @BeforeEach
     void setUp() {
         PacManSprites sprites = new PacManSprites();
-        parser = new MapParser(new LevelFactory(sprites, new GhostFactory(sprites)), new BoardFactory(sprites));
+        parser = new MapParser(new LevelFactory(sprites, new GhostFactory(sprites), new FruitFactory(sprites)), new BoardFactory(sprites));
     }
 
     /**

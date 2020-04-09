@@ -1,6 +1,7 @@
 package nl.tudelft.jpacman.level;
 
 import nl.tudelft.jpacman.board.Unit;
+import nl.tudelft.jpacman.level.unit.Fruit;
 import nl.tudelft.jpacman.level.unit.Pellet;
 import nl.tudelft.jpacman.level.unit.Player;
 import nl.tudelft.jpacman.npc.Ghost;
@@ -60,6 +61,12 @@ public class DefaultPlayerInteractionMap implements CollisionMap {
                 if (pellet.isPowerPellet()) {
                     level.setGameMode((byte) 1);
                 }
+            });
+
+        collisionMap.onCollision(Player.class, Fruit.class,
+            (player, fruit) -> {
+                fruit.leaveSquare();
+                player.addPoints(fruit.getValue());
             });
         return collisionMap;
     }

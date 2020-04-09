@@ -63,7 +63,8 @@ class LevelTest {
     @BeforeEach
     void setUp() {
         PacManSprites sprites = new PacManSprites();
-        parser = new MapParser(new LevelFactory(sprites, new GhostFactory(sprites)), new BoardFactory(sprites));
+        FruitFactory fruitCreator = new FruitFactory(sprites);
+        parser = new MapParser(new LevelFactory(sprites, new GhostFactory(sprites), fruitCreator), new BoardFactory(sprites));
         board = parser
             .parseMap(Lists.newArrayList("#####", "# o #", "#####"))
             .getBoard();
@@ -72,7 +73,7 @@ class LevelTest {
         ghost = new Blinky(mock(ArrayList.class), square2);
         ghost.occupy(square2);
 
-        level = new Level(board, Lists.newArrayList(ghost), Lists.newArrayList(square1, square2));
+        level = new Level(board, Lists.newArrayList(ghost), Lists.newArrayList(square1, square2), Lists.newArrayList(), fruitCreator);
     }
 
     /**
