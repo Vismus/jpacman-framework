@@ -255,6 +255,15 @@ public class Level {
     }
 
     /**
+     * Returns the number of pellets before running the level.
+     *
+     * @return The number of pellets into the board.
+     */
+    public int getNbPellets() {
+        return nbPellets;
+    }
+
+    /**
      * Moves the unit into the given direction if possible and handles all
      * collisions.
      *
