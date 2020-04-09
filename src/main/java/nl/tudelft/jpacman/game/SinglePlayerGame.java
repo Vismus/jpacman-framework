@@ -50,4 +50,9 @@ public class SinglePlayerGame extends Game {
     public Level getLevel() {
         return level;
     }
+
+    @Override
+    public void halfPelletsEaten() {
+        this.level.placeFruit();
+    }
 }

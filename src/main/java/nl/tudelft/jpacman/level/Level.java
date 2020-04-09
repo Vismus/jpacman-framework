@@ -71,6 +71,21 @@ public class Level {
     private final List<Square> startSquares;
 
     /**
+     * The squares in which a fruit can be created during the game.
+     */
+    private final List<Square> fruitSquares;
+
+    /**
+     * the spawn fruit, false when no fruit is placed during the game, otherwise it is true.
+     */
+    private boolean spawnFruit = false;
+
+    /**
+     * The initial number of pellets before starting the game
+     */
+    private final int nbPellets;
+
+    /**
      * The start current selected starting square.
      */
     private int startSquareIndex;
@@ -86,6 +101,11 @@ public class Level {
     private final Set<LevelObserver> observers;
 
     /**
+     * The factory providing the fruits.
+     */
+    private final FruitFactory fruitFactory;
+
+    /**
      * The current game mode of the level.
      * 0: ghosts chase pacman
      * 1: pacman chase vulnerable ghosts
@@ -99,13 +119,16 @@ public class Level {
      * @param board          The board for the level.
      * @param ghosts         The ghosts on the board.
      * @param startPositions The squares on which players start on this board.
+     * @param fruitPositions The squares on which a fruit can be created on the board
      */
-    public Level(Board board, List<Ghost> ghosts, List<Square> startPositions) {
+    public Level(Board board, List<Ghost> ghosts, List<Square> startPositions, List<Square> fruitPositions, FruitFactory fruitFactory) {
         assert board != null;
         assert ghosts != null;
         assert startPositions != null;
+        assert fruitPositions != null;
 
         this.board = board;
+        this.nbPellets = remainingPellets(false);
         this.inProgress = false;
         this.npcsMoveSchedules = new HashMap<>();
         this.npcsRebornSchedules = new HashMap<>();
@@ -122,6 +145,8 @@ public class Level {
         this.collisions = new DefaultPlayerInteractionMap(this);
         this.observers = new HashSet<>();
         this.exitHuntingModeService = new ScheduledTaskService();
+        this.fruitSquares = fruitPositions;
+        this.fruitFactory = fruitFactory;
     }
 
     /**
@@ -370,6 +395,12 @@ public class Level {
                 observer.levelWon();
             }
         }
+
+        if (remainingPellets(false) == nbPellets / 2 && !spawnFruit) {
+            for (LevelObserver observer : observers) {
+                observer.halfPelletsEaten();
+            }
+        }
     }
 
     /**
@@ -411,6 +442,11 @@ public class Level {
         return pellets;
     }
 
+    public void placeFruit() {
+        int index = this.fruitSquares.size() == 1 ? 0 : new Random().nextInt(this.fruitSquares.size());
+        this.fruitFactory.createFruit().occupy(this.fruitSquares.get(index));
+    }
+
     /**
      * An observer that will be notified when the level is won or lost.
      *
@@ -429,5 +465,11 @@ public class Level {
          * this event is received.
          */
         void levelLost();
+
+        /**
+         * When pacman eats the half of pellets in the level, then the level should
+         * be placed a fruit in the board.
+         */
+        void halfPelletsEaten();
     }
 }

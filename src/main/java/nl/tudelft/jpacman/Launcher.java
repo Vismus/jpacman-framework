@@ -121,7 +121,7 @@ public class Launcher {
      * and the ghosts from {@link #getGhostFactory()}.
      */
     protected LevelFactory getLevelFactory() {
-        return new LevelFactory(getSpriteStore(), getGhostFactory());
+        return new LevelFactory(getSpriteStore(), getGhostFactory(), getFruitFactory());
     }
 
     /**
@@ -143,6 +143,13 @@ public class Launcher {
      */
     protected PlayerFactory getPlayerFactory() {
         return new PlayerFactory(getSpriteStore());
+    }
+
+    /**
+     * @return A new factory using the sprites from {@link #getSpriteStore()}.
+     */
+    protected FruitFactory getFruitFactory() {
+        return new FruitFactory(getSpriteStore());
     }
 
     /**

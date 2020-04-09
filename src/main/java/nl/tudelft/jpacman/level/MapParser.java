@@ -70,18 +70,19 @@ public class MapParser {
 
         List<Ghost> ghosts = new ArrayList<>();
         List<Square> startPositions = new ArrayList<>();
+        List<Square> fruitPositions = new ArrayList<>();
 
-        makeGrid(map, width, height, grid, ghosts, startPositions);
+        makeGrid(map, width, height, grid, ghosts, startPositions, fruitPositions);
 
         Board board = boardCreator.createBoard(grid);
-        return levelCreator.createLevel(board, ghosts, startPositions);
+        return levelCreator.createLevel(board, ghosts, startPositions, fruitPositions);
     }
 
-    private void makeGrid(char[][] map, int width, int height, Square[][] grid, List<Ghost> ghosts, List<Square> startPositions) {
+    private void makeGrid(char[][] map, int width, int height, Square[][] grid, List<Ghost> ghosts, List<Square> startPositions, List<Square> fruitPositions) {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 char c = map[x][y];
-                addSquare(grid, ghosts, startPositions, x, y, c);
+                addSquare(grid, ghosts, startPositions, fruitPositions, x, y, c);
             }
         }
     }
@@ -107,7 +108,7 @@ public class MapParser {
      *            Character describing the square type.
      */
     protected void addSquare(Square[][] grid, List<Ghost> ghosts,
-                             List<Square> startPositions, int x, int y, char c) {
+                             List<Square> startPositions, List<Square> fruitPositions, int x, int y, char c) {
         switch (c) {
             case ' ':
                 grid[x][y] = boardCreator.createGround();
@@ -124,6 +125,11 @@ public class MapParser {
                 Square powerPelletSquare = boardCreator.createGround();
                 grid[x][y] = powerPelletSquare;
                 levelCreator.createPowerPellet().occupy(powerPelletSquare);
+                break;
+            case 'F':
+                Square fruitSquare = boardCreator.createGround();
+                grid[x][y] = fruitSquare;
+                fruitPositions.add(fruitSquare);
                 break;
             case 'G':
                 Square ghostSquare = makeGhostSquare(ghosts);
