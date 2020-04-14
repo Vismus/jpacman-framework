@@ -212,9 +212,9 @@ public class Level {
      */
     private void startHuntingMode() {
         if (this.remainingPellets(true) > 2) {
-            this.exitHuntingModeService.schedule(new ExitHuntingModeTask(this.exitHuntingModeService, this), 7000, true);
-        } else {
             this.exitHuntingModeService.schedule(new ExitHuntingModeTask(this.exitHuntingModeService, this), 5000, true);
+        } else {
+            this.exitHuntingModeService.schedule(new ExitHuntingModeTask(this.exitHuntingModeService, this), 3000, true);
         }
         for (Ghost npc : this.getGhosts()) {
             npc.setAlive(true);
