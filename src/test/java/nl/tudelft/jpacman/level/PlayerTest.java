@@ -34,4 +34,18 @@ public class PlayerTest {
         player.setAlive(false);
         assertThat(player.isAlive()).isFalse();
     }
+
+    @Test
+    public void testPlayerLosesLife() {
+        assertThat(player.getRemainingLifes()).isEqualTo(3);
+        player.loseLife();
+        assertThat(player.getRemainingLifes()).isEqualTo(2);
+    }
+
+    @Test
+    public void testPlayerGainsExtraLife() {
+        assertThat(player.getRemainingLifes()).isEqualTo(3);
+        player.addPoints(10000);
+        assertThat(player.getRemainingLifes()).isEqualTo(4);
+    }
 }

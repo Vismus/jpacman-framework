@@ -4,12 +4,10 @@ import nl.tudelft.jpacman.board.Board;
 import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.board.Square;
 import nl.tudelft.jpacman.board.Unit;
-import nl.tudelft.jpacman.level.task.ExitHuntingModeTask;
-import nl.tudelft.jpacman.level.task.GhostMoveTask;
-import nl.tudelft.jpacman.level.task.PlayerMoveTask;
-import nl.tudelft.jpacman.level.task.ScheduledTaskService;
+import nl.tudelft.jpacman.level.task.*;
 import nl.tudelft.jpacman.level.unit.Pellet;
 import nl.tudelft.jpacman.level.unit.Player;
+import nl.tudelft.jpacman.level.unit.Player.PlayerObserver;
 import nl.tudelft.jpacman.npc.Ghost;
 
 import java.util.*;
@@ -21,7 +19,7 @@ import java.util.*;
  * @author Jeroen Roosen
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public class Level {
+public class Level implements PlayerObserver {
 
     /**
      * The board of this level.
@@ -241,6 +239,8 @@ public class Level {
         playersMoveSchedules.put(player, service);
         Square square = startSquares.get(startSquareIndex);
         player.occupy(square);
+        player.setInitialPostion(square);
+        player.register(this);
         startSquareIndex++;
         startSquareIndex %= startSquares.size();
     }
@@ -421,7 +421,7 @@ public class Level {
      */
     public boolean isAnyPlayerAlive() {
         for (Player player : playersMoveSchedules.keySet()) {
-            if (player.isAlive()) {
+            if (player.getRemainingLifes() > 0) {
                 return true;
             }
         }
@@ -451,9 +451,30 @@ public class Level {
         return pellets;
     }
 
+    /**
+     * Place a fruit into the level
+     */
     public void placeFruit() {
         int index = this.fruitSquares.size() == 1 ? 0 : new Random().nextInt(this.fruitSquares.size());
         this.fruitFactory.createFruit().occupy(this.fruitSquares.get(index));
+    }
+
+    /**
+     * Respawn the ghosts in their initial position
+     */
+    public void respawnGhostsInInitialPosition() {
+        getGhosts().forEach(ghost -> ghost.occupy(ghost.getInitialPosition()));
+    }
+
+    @Override
+    public void playerKilled(Player player) {
+        if (getPlayers().size() == 1) {
+            this.stop();
+            this.getGhosts().forEach(Unit::leaveSquare);
+            player.setAlive(false);
+            ScheduledTaskService service = new ScheduledTaskService();
+            service.schedule(new PlayerDeadTask(service, player, this), 2000, true);
+        }
     }
 
     /**
