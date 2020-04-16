@@ -2,10 +2,14 @@ package nl.tudelft.jpacman.level.unit;
 
 import nl.tudelft.jpacman.ConfigurationLoader;
 import nl.tudelft.jpacman.board.Direction;
+import nl.tudelft.jpacman.board.Square;
 import nl.tudelft.jpacman.board.Unit;
+import nl.tudelft.jpacman.level.Level;
 import nl.tudelft.jpacman.sprite.AnimatedSprite;
 import nl.tudelft.jpacman.sprite.Sprite;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,9 +45,26 @@ public class Player extends Unit {
     private int consecutiveKills;
 
     /**
+     * The initial position of the player in the level
+     */
+    private Square initialPostion;
+
+    /**
+     * The list of player observers which will be notify when the player is killed by a ghost
+     */
+    public final List<PlayerObserver> observers;
+
+    /**
+     * The remaining lifes of the player.
+     * By default, the player has the number of lifes defined into the configuration files.
+     */
+    public int remainingLifes = Integer.parseInt(ConfigurationLoader.getProperty("player.default.number.lifes"));
+
+    /**
      * The base movement interval.
      */
     private static final int MOVE_INTERVAL = Integer.parseInt(ConfigurationLoader.getProperty("player.move.interval"));
+    private static final int SCORE_GAIN_EXTRA_LIFE = Integer.parseInt(ConfigurationLoader.getProperty("player.score.extra.life"));
 
     /**
      * Creates a new player with a score of 0 points.
@@ -58,6 +79,7 @@ public class Player extends Unit {
         this.deathSprite = deathAnimation;
         this.consecutiveKills = 0;
         deathSprite.setAnimating(false);
+        this.observers = new ArrayList<>();
     }
 
     /**
@@ -129,6 +151,33 @@ public class Player extends Unit {
     }
 
     /**
+     * Returns the remaining lifes of the player
+     *
+     * @return The remaining lifes of the player
+     */
+    public int getRemainingLifes() {
+        return remainingLifes;
+    }
+
+    /**
+     * Returns the initial position of the player
+     *
+     * @return The initial position of the player
+     */
+    public Square getInitialPostion() {
+        return initialPostion;
+    }
+
+    /**
+     * Sets the initial position for the player
+     *
+     * @param initialPostion the initial to set for the player
+     */
+    public void setInitialPostion(Square initialPostion) {
+        this.initialPostion = initialPostion;
+    }
+
+    /**
      * Adds points to the score of this player.
      *
      * @param points The amount of points to add to the points this player already
@@ -136,5 +185,66 @@ public class Player extends Unit {
      */
     public void addPoints(int points) {
         score += points;
+
+        if (score >= SCORE_GAIN_EXTRA_LIFE) {
+            gainExtraLife();
+        }
+    }
+
+    /**
+     * Add an extra life, when the player reaches the limit of points to gain an extra life.
+     */
+    public void gainExtraLife() {
+        this.remainingLifes += 1;
+    }
+
+    /**
+     * Removes a life to the player
+     */
+    public void loseLife() {
+        this.remainingLifes -= 1;
+        if (remainingLifes > 0) {
+            notifyObservers();
+        } else {
+            setAlive(false);
+        }
+    }
+
+    /**
+     * When the player is registered into the level, then the level is added into the list of observers
+     *
+     * @param level is the player observer for this player
+     */
+    public void register(Level level) {
+        observers.add(level);
+    }
+
+    /**
+     * Remove the level to the player observer when the player is unresgisterec to this level.
+     *
+     * @param level: The level to remove to the list of player observer
+     */
+    public void unregister(Level level) {
+        observers.remove(level);
+    }
+
+    /**
+     * Notifies to all player observers that the player is killed by a ghost
+     */
+    public void notifyObservers() {
+        observers.forEach(playerObserver -> playerObserver.playerKilled(this));
+    }
+
+    /**
+     * An observer that will be notified when the player is killed by a ghost.
+     */
+    public interface PlayerObserver {
+        /**
+         * When the player is killed by a ghost, we schedule the animation to show the death of the player
+         * and then the game restart with the NPCs and the player in their initial position.
+         *
+         * @param player The player killed by a ghost
+         */
+        void playerKilled(Player player);
     }
 }

@@ -43,7 +43,7 @@ public class DefaultPlayerInteractionMap implements CollisionMap {
             (player, ghost) -> {
                 if (ghost.isAlive()) {
                     if (ghost.getGameMode() == 0) {
-                        player.setAlive(false);
+                        player.loseLife();
                     } else {
                         ghost.setAlive(false);
                         ghost.setGameMode((byte) 0);
