@@ -27,7 +27,7 @@ public class ScorePanel extends JPanel {
     /**
      * The map of players and the labels their scores are on.
      */
-    private final Map<Player, JLabel> scoreLabels;
+    private final Map<Player, PlayerPanel> scoreLabels;
 
     /**
      * The default way in which the score is shown.
@@ -57,9 +57,9 @@ public class ScorePanel extends JPanel {
         }
         scoreLabels = new LinkedHashMap<>();
         for (Player player : players) {
-            JLabel scoreLabel = new JLabel("0", JLabel.CENTER);
-            scoreLabels.put(player, scoreLabel);
-            add(scoreLabel);
+            PlayerPanel playerPanel = new PlayerPanel(player);
+            scoreLabels.put(player, playerPanel);
+            add(playerPanel);
         }
     }
 
@@ -67,14 +67,14 @@ public class ScorePanel extends JPanel {
      * Refreshes the scores of the players.
      */
     protected void refresh() {
-        for (Map.Entry<Player, JLabel> entry : scoreLabels.entrySet()) {
+        for (Map.Entry<Player, PlayerPanel> entry : scoreLabels.entrySet()) {
             Player player = entry.getKey();
             String score = "";
             if (!player.isAlive()) {
                 score = "You died. ";
             }
             score += scoreFormatter.format(player);
-            entry.getValue().setText(score);
+            entry.getValue().refresh(score, player.getRemainingLifes());
         }
     }
 
