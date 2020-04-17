@@ -24,7 +24,7 @@ public final class PlayerMoveTask extends Task {
 
     @Override
     public void run() {
-        Direction direction = this.player.getDirection();
+        Direction direction = this.player.nextMove();
         if (direction != null) {
             this.level.move(this.player, direction);
         }

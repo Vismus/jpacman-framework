@@ -7,6 +7,7 @@ import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.exceptions.PacmanConfigurationException;
 import nl.tudelft.jpacman.game.Game;
 import nl.tudelft.jpacman.level.unit.Player;
+import nl.tudelft.jpacman.strategies.HumanStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +41,7 @@ public class LauncherSmokeTest {
     @Test
     void testNonexistentMapFile() {
         launcher.withMapFile("/maps/nonexistentfile.txt");
-        assertThatThrownBy(() -> launcher.launch()).isInstanceOf(PacmanConfigurationException.class);
+        assertThatThrownBy(() -> launcher.launch(HumanStrategy.class)).isInstanceOf(PacmanConfigurationException.class);
     }
 
     /**
@@ -53,7 +54,7 @@ public class LauncherSmokeTest {
     @SuppressWarnings({"magicnumber", "methodlength", "PMD.JUnitTestContainsTooManyAsserts"})
     @Test
     void smokeTest() throws InterruptedException {
-        launcher.launch();
+        launcher.launch(HumanStrategy.class);
 
         Game game = launcher.getGame();
         Player player = game.getPlayers().get(0);

@@ -61,6 +61,10 @@ class BoardPanel extends JPanel {
         setPreferredSize(size);
     }
 
+    public Game getGame() {
+        return game;
+    }
+
     @Override
     public void paint(Graphics g) {
         assert g != null;

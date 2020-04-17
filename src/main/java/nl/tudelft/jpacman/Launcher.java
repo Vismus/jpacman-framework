@@ -9,6 +9,7 @@ import nl.tudelft.jpacman.level.*;
 import nl.tudelft.jpacman.level.unit.Player;
 import nl.tudelft.jpacman.npc.ghost.GhostFactory;
 import nl.tudelft.jpacman.sprite.PacManSprites;
+import nl.tudelft.jpacman.strategies.PacManStrategy;
 import nl.tudelft.jpacman.ui.Action;
 import nl.tudelft.jpacman.ui.PacManUI;
 import nl.tudelft.jpacman.ui.PacManUiBuilder;
@@ -69,11 +70,10 @@ public class Launcher {
      *
      * @return a new Game.
      */
-    public Game makeGame() {
+    public void makeGame() {
         GameFactory gf = getGameFactory();
         Level level = makeLevel();
         game = gf.createSinglePlayerGame(level);
-        return game;
     }
 
     /**
@@ -186,12 +186,31 @@ public class Launcher {
      * Creates and starts a JPac-Man game.
      */
     public void launch() {
-        makeGame();
+        if (getGame() == null) {
+            makeGame();
+        }
         PacManUiBuilder builder = new PacManUiBuilder().withDefaultButtons();
         addSinglePlayerKeys(builder);
         pacManUI = builder.build(getGame());
         pacManUI.start();
     }
+
+    /**
+     * Creates and starts a JPac-Man game.
+     * This method is useful to facilitate the unit test
+     *
+     * @param clazz The class to generate the strategy for PacMan.
+     */
+    public void launch(Class<? extends PacManStrategy> clazz) {
+        makeGame();
+        try {
+            game.setStrategy(clazz.getDeclaredConstructor(Game.class).newInstance(game));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        launch();
+    }
+
 
     /**
      * Disposes of the UI. For more information see

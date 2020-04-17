@@ -6,6 +6,7 @@ import nl.tudelft.jpacman.level.Level;
 import nl.tudelft.jpacman.level.unit.Player;
 
 import com.google.common.collect.ImmutableList;
+import nl.tudelft.jpacman.strategies.PacManStrategy;
 
 /**
  * A game with one player and a single level.
@@ -37,6 +38,7 @@ public class SinglePlayerGame extends Game {
         assert level != null;
 
         this.player = player;
+        this.player.setStrategy(getStrategy());
         this.level = level;
         this.level.registerPlayer(player);
     }
@@ -49,6 +51,16 @@ public class SinglePlayerGame extends Game {
     @Override
     public Level getLevel() {
         return level;
+    }
+
+    @Override
+    public PacManStrategy getStrategy() {
+        return this.player.getStrategy();
+    }
+
+    @Override
+    public void setStrategy(PacManStrategy strategy) {
+        this.player.setStrategy(strategy);
     }
 
     @Override
