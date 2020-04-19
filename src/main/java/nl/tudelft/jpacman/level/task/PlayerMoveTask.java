@@ -28,6 +28,7 @@ public final class PlayerMoveTask extends Task {
         if (direction != null) {
             this.level.move(this.player, direction);
         }
+
         long interval = this.player.getInterval();
         service.schedule(this, interval, true);
     }
