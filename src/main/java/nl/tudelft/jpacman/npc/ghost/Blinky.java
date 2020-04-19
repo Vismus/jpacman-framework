@@ -7,6 +7,7 @@ import nl.tudelft.jpacman.board.Unit;
 import nl.tudelft.jpacman.level.unit.Player;
 import nl.tudelft.jpacman.npc.Ghost;
 import nl.tudelft.jpacman.sprite.Sprite;
+import nl.tudelft.jpacman.strategies.Navigation;
 
 import java.util.ArrayList;
 import java.util.Map;

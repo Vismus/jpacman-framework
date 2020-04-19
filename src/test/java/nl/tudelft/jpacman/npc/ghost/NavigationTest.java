@@ -8,6 +8,7 @@ import nl.tudelft.jpacman.level.MapParser;
 import nl.tudelft.jpacman.level.unit.Pellet;
 import nl.tudelft.jpacman.npc.Ghost;
 import nl.tudelft.jpacman.sprite.PacManSprites;
+import nl.tudelft.jpacman.strategies.Navigation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
