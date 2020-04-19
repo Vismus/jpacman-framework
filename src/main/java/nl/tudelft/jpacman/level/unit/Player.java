@@ -56,6 +56,9 @@ public class Player extends Unit {
      */
     public final List<PlayerObserver> observers;
 
+    /**
+     * The strategy of the player (either it's a human or a IA which move the PacMan.
+     */
     private PacManStrategy strategy;
 
     /**
@@ -181,10 +184,20 @@ public class Player extends Unit {
         this.initialPostion = initialPostion;
     }
 
+    /**
+     * Return the strategy of the player.
+     *
+     * @return The strategy of the player.
+     */
     public PacManStrategy getStrategy() {
         return strategy;
     }
 
+    /**
+     * Set the strategy of the player.
+     *
+     * @param strategy The strategy to set for the player.
+     */
     public void setStrategy(PacManStrategy strategy) {
         this.strategy = strategy;
     }
@@ -222,6 +235,11 @@ public class Player extends Unit {
         }
     }
 
+    /**
+     * Select the next move for the player based on the strategy of the player.
+     *
+     * @return the next direction the player must do for the next move.
+     */
     public Direction nextMove() {
         if (strategy instanceof HumanStrategy) {
             return getDirection();

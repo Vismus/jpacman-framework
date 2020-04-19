@@ -52,6 +52,13 @@ public final class PacManAI {
         return null;
     }
 
+    /**
+     * Get all paths to the next intersections
+     *
+     * @param player the player
+     * @param possibleDirections the list of possible directions that the player can take.
+     * @return the map with the destination as key and the path to reach the destination.
+     */
     public static Map<Square, List<Direction>> getPathToNextIntersections(Player player, List<Direction> possibleDirections) {
         List<Square> listNextIntersections = possibleDirections.stream()
             .map(direction -> findNextIntersection(player, player.getSquare().getSquareAt(direction), direction))
@@ -86,6 +93,14 @@ public final class PacManAI {
         return square;
     }
 
+    /**
+     * Get the unblocked path.
+     *
+     * @param from the departure square of the path.
+     * @param ghosts the list of ghosts.
+     * @param possiblePaths the list of possible directions that the player can take.
+     * @return the map with the destination as key and the path to reach the destination.
+     */
     public static Map<Square, List<Direction>> getUnBlockedPath(Square from, Set<Ghost> ghosts, Map<Square, List<Direction>> possiblePaths) {
         List<Square> ghostSquares = ghosts.stream()
             .map(Unit::getSquare)
@@ -117,6 +132,13 @@ public final class PacManAI {
         return true;
     }
 
+    /**
+     * Search the best direction to flee the nearest ghost.
+     *
+     * @param currentSquare the departure of the path.
+     * @param possibleDirections list of possible directions that the player can take.
+     * @return The best direction that the player must take to survive.
+     */
     public static Direction fleeNearestGhost(Square currentSquare, List<Direction> possibleDirections) {
         Unit ghost = Navigation.findNearest(Ghost.class, currentSquare);
 
@@ -137,6 +159,12 @@ public final class PacManAI {
         return possibleDirections.get(0);
     }
 
+    /**
+     * Get all possible directions that the plyaer can take.
+     *
+     * @param player the current player.
+     * @return The list of possible directions.
+     */
     public static List<Direction> getPossibleDirections(Player player) {
         ArrayList<Direction> possibleDirections = new ArrayList<>();
         for (Direction d : Direction.values()) {
@@ -148,6 +176,13 @@ public final class PacManAI {
         return possibleDirections;
     }
 
+    /**
+     * Search the best direction to maximize the score.
+     * 
+     * @param player the current player.
+     * @param paths list of paths.
+     * @return The best direction to maximize the score.
+     */
     public static Direction maximizePoints(Player player, List<List<Direction>> paths) {
         Unit fruit = Navigation.findNearest(Fruit.class, player.getSquare());
 
@@ -160,6 +195,14 @@ public final class PacManAI {
         return maximizePellets(player, paths, pellet);
     }
 
+    /**
+     * Search the best direction to eat the fruit and maximize the score.
+     *
+     * @param player the current player.
+     * @param paths the list of paths.
+     * @param fruit the fruit to eat.
+     * @return The direction that the player must take to maximize his score.
+     */
     private static Direction maximizeFruits(Player player, List<List<Direction>> paths, Unit fruit) {
         List<Direction> nearestFruit = Navigation.shortestPath(player.getSquare(), fruit.getSquare(), player);
         assert nearestFruit != null;
@@ -176,6 +219,14 @@ public final class PacManAI {
         return possibleDirections.get(0);
     }
 
+    /**
+     * Search the best direction to maximize the score.
+     *
+     * @param player the current player.
+     * @param paths the list of paths.
+     * @param nearestPellet the nearest pellet.
+     * @return The best direction to eat most pellets.
+     */
     private static Direction maximizePellets(Player player, List<List<Direction>> paths, Unit nearestPellet) {
         int maxNbPellets = 0;
         Direction directionSelected = paths.get(0).get(0);
@@ -208,6 +259,13 @@ public final class PacManAI {
         return directionSelected;
     }
 
+    /**
+     * Get all safe paths.
+     *
+     * @param ghosts the list of ghosts.
+     * @param possiblePaths the list of possible paths.
+     * @return A map with destination square as key and the path to reach this destination.
+     */
     public static Map<Square, List<Direction>> getSafePaths(Set<Ghost> ghosts, Map<Square, List<Direction>> possiblePaths) {
         return possiblePaths.entrySet().parallelStream()
             .filter(setPath -> {
@@ -220,6 +278,14 @@ public final class PacManAI {
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
+    /**
+     * Get the worth paths.
+     *
+     * @param from the departure square.
+     * @param ghosts the list of ghosts
+     * @param dangerousPaths the list of paths considered as dangerous.
+     * @return List of paths that the player can take the risk to go.
+     */
     public static List<List<Direction>> getWorthPaths(Square from, Set<Ghost> ghosts, Map<Square, List<Direction>> dangerousPaths) {
         List<List<Direction>> worthPaths = new ArrayList<>(dangerousPaths.size());
         Map<Ghost, Integer> ghostSquareAndDistanceToPacman = calculateDistancesByGhost(ghosts, from);
@@ -250,6 +316,13 @@ public final class PacManAI {
         return worthPaths;
     }
 
+    /**
+     * Compute the distance from player to each ghost.
+     *
+     * @param ghosts the list of ghosts.
+     * @param from the current position of the player.
+     * @return the Map containing the ghost as key and the distance from the player and this ghost.
+     */
     private static Map<Ghost, Integer> calculateDistancesByGhost(Set<Ghost> ghosts, Square from) {
         Map<Ghost, Integer> ghostSquareAndDistanceToPacman = new HashMap<>(ghosts.size());
 
@@ -262,6 +335,13 @@ public final class PacManAI {
         return ghostSquareAndDistanceToPacman;
     }
 
+    /**
+     * Check if the path contains some pellets.
+     *
+     * @param from the departure square of the path.
+     * @param path the path.
+     * @return True if this path contain at least a pellet, otherwise return false.
+     */
     private static boolean isPelletPath(Square from, List<Direction> path) {
         Square square = from;
 
