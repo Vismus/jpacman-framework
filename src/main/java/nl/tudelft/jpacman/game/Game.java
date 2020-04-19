@@ -84,9 +84,9 @@ public abstract class Game implements LevelObserver {
     public abstract PacManStrategy getStrategy();
 
     /**
-     * @param strategy set the strategy
+     * @param strategy the selected strategy
      */
-    public abstract void setStrategy(PacManStrategy strategy);
+    public abstract void selectStrategy(Class<? extends PacManStrategy> clazz);
 
     /**
      * Change the direction of the player in the game.

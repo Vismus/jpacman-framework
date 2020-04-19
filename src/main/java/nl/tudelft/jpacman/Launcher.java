@@ -204,7 +204,7 @@ public class Launcher {
     public void launch(Class<? extends PacManStrategy> clazz) {
         makeGame();
         try {
-            game.setStrategy(clazz.getDeclaredConstructor(Game.class).newInstance(game));
+            game.selectStrategy(clazz);
         } catch (Exception e) {
             e.printStackTrace();
         }

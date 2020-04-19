@@ -13,6 +13,7 @@ import javax.swing.*;
 import nl.tudelft.jpacman.game.Game;
 import nl.tudelft.jpacman.strategies.HumanStrategy;
 import nl.tudelft.jpacman.strategies.PacManStrategy;
+import nl.tudelft.jpacman.strategies.PriorityToScoreStrategy;
 import nl.tudelft.jpacman.ui.ScorePanel.ScoreFormatter;
 
 /**
@@ -34,6 +35,7 @@ public class PacManUI extends JFrame {
     private static final HashMap<String, Class<? extends PacManStrategy>> PACMAN_STRATEGIES = new HashMap() {
         {
             put(HumanStrategy.TITLE, HumanStrategy.class);
+            put(PriorityToScoreStrategy.TITLE, PriorityToScoreStrategy.class);
         }
     };
 
@@ -110,7 +112,7 @@ public class PacManUI extends JFrame {
     public void start() {
         setVisible(true);
         if (boardPanel.getGame().getStrategy() == null) {
-            boardPanel.getGame().setStrategy(selectStrategy());
+            boardPanel.getGame().selectStrategy(selectStrategy());
         }
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
         service.scheduleAtFixedRate(this::nextFrame, 0, FRAME_INTERVAL, TimeUnit.MILLISECONDS);
@@ -121,7 +123,7 @@ public class PacManUI extends JFrame {
      *
      * @return The pacman strategy class
      */
-    private PacManStrategy selectStrategy() {
+    private Class<? extends PacManStrategy> selectStrategy() {
         PacManStrategy strategy = null;
         String pacmanStrategyName = (String) JOptionPane.showInputDialog(
             this,
@@ -132,13 +134,7 @@ public class PacManUI extends JFrame {
             PACMAN_STRATEGIES.keySet().stream().sorted().toArray(),
             null);
 
-        try {
-            strategy = PACMAN_STRATEGIES.get(pacmanStrategyName).getDeclaredConstructor(Game.class).newInstance(boardPanel.getGame());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return strategy;
+        return PACMAN_STRATEGIES.get(pacmanStrategyName);
     }
 
     /**
