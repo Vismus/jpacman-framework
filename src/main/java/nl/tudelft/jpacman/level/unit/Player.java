@@ -64,7 +64,16 @@ public class Player extends Unit {
      * The base movement interval.
      */
     private static final int MOVE_INTERVAL = Integer.parseInt(ConfigurationLoader.getProperty("player.move.interval"));
+
+    /**
+     * The score that the player must reach to gain an extra life
+     */
     private static final int SCORE_GAIN_EXTRA_LIFE = Integer.parseInt(ConfigurationLoader.getProperty("player.score.extra.life"));
+
+    /**
+     * Check the player has already gained his extra life
+     */
+    private boolean receiveExtraLife;
 
     /**
      * Creates a new player with a score of 0 points.
@@ -80,6 +89,7 @@ public class Player extends Unit {
         this.consecutiveKills = 0;
         deathSprite.setAnimating(false);
         this.observers = new ArrayList<>();
+        this.receiveExtraLife = false;
     }
 
     /**
@@ -186,7 +196,7 @@ public class Player extends Unit {
     public void addPoints(int points) {
         score += points;
 
-        if (score >= SCORE_GAIN_EXTRA_LIFE) {
+        if (!receiveExtraLife && score >= SCORE_GAIN_EXTRA_LIFE) {
             gainExtraLife();
         }
     }
@@ -196,6 +206,7 @@ public class Player extends Unit {
      */
     public void gainExtraLife() {
         this.remainingLifes += 1;
+        receiveExtraLife = true;
     }
 
     /**
