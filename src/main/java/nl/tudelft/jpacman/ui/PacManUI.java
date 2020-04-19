@@ -2,16 +2,18 @@ package nl.tudelft.jpacman.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 
 import nl.tudelft.jpacman.game.Game;
+import nl.tudelft.jpacman.strategies.HumanStrategy;
+import nl.tudelft.jpacman.strategies.PacManStrategy;
+import nl.tudelft.jpacman.strategies.PriorityToScoreStrategy;
 import nl.tudelft.jpacman.ui.ScorePanel.ScoreFormatter;
 
 /**
@@ -29,6 +31,13 @@ import nl.tudelft.jpacman.ui.ScorePanel.ScoreFormatter;
  *
  */
 public class PacManUI extends JFrame {
+
+    private static final HashMap<String, Class<? extends PacManStrategy>> PACMAN_STRATEGIES = new HashMap() {
+        {
+            put(HumanStrategy.TITLE, HumanStrategy.class);
+            put(PriorityToScoreStrategy.TITLE, PriorityToScoreStrategy.class);
+        }
+    };
 
     /**
      * Default serialisation UID.
@@ -102,8 +111,30 @@ public class PacManUI extends JFrame {
      */
     public void start() {
         setVisible(true);
+        if (boardPanel.getGame().getStrategy() == null) {
+            boardPanel.getGame().selectStrategy(selectStrategy());
+        }
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
         service.scheduleAtFixedRate(this::nextFrame, 0, FRAME_INTERVAL, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Ask the user for the pacman strategy and return it.
+     *
+     * @return The pacman strategy class
+     */
+    private Class<? extends PacManStrategy> selectStrategy() {
+        PacManStrategy strategy = null;
+        String pacmanStrategyName = (String) JOptionPane.showInputDialog(
+            this,
+            "Select a pacman strategy",
+            "PacMan Strategy",
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            PACMAN_STRATEGIES.keySet().stream().sorted().toArray(),
+            null);
+
+        return PACMAN_STRATEGIES.get(pacmanStrategyName);
     }
 
     /**

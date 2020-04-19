@@ -2,6 +2,7 @@ package nl.tudelft.jpacman.integration;
 
 import nl.tudelft.jpacman.Launcher;
 import nl.tudelft.jpacman.game.Game;
+import nl.tudelft.jpacman.strategies.HumanStrategy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,7 @@ public class StartStopSystemTest {
      */
     @Test
     public void gameIsRunning() {
-        launcher.launch();
+        launcher.launch(HumanStrategy.class);
 
         getGame().start();
 
@@ -50,7 +51,7 @@ public class StartStopSystemTest {
      */
     @Test
     public void gameIsNotRunning() {
-        launcher.launch();
+        launcher.launch(HumanStrategy.class);
         assertThat(getGame().isInProgress()).isFalse();
         getGame().start();
         getGame().stop();

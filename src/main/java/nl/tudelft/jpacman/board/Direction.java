@@ -3,7 +3,7 @@ package nl.tudelft.jpacman.board;
 /**
  * An enumeration of possible directions on a two-dimensional square grid.
  *
- * @author Jeroen Roosen 
+ * @author Jeroen Roosen
  */
 public enum Direction {
 
@@ -39,6 +39,27 @@ public enum Direction {
      */
     private final int deltaY;
 
+    private Direction opposite;
+    private Direction clockwise;
+    private Direction oppositeClockwise;
+
+    static {
+        NORTH.opposite = SOUTH;
+        SOUTH.opposite = NORTH;
+        WEST.opposite = EAST;
+        EAST.opposite = WEST;
+
+        NORTH.clockwise = EAST;
+        SOUTH.clockwise = WEST;
+        WEST.clockwise = NORTH;
+        EAST.clockwise = SOUTH;
+
+        NORTH.oppositeClockwise = WEST;
+        SOUTH.oppositeClockwise = EAST;
+        WEST.oppositeClockwise = SOUTH;
+        EAST.oppositeClockwise = NORTH;
+    }
+
     /**
      * Creates a new Direction with the given parameters.
      *
@@ -68,5 +89,26 @@ public enum Direction {
      */
     public int getDeltaY() {
         return deltaY;
+    }
+
+    /**
+     * @return the opposite of the current direction
+     */
+    public Direction getOpposite() {
+        return opposite;
+    }
+
+    /**
+     * @return the clockwise of the current direction
+     */
+    public Direction getClockwise() {
+        return clockwise;
+    }
+
+    /**
+     * @return the oppositeClockwise of the current direction
+     */
+    public Direction getOppositeClockwise() {
+        return oppositeClockwise;
     }
 }

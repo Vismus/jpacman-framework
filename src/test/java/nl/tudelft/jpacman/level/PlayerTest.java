@@ -2,6 +2,7 @@ package nl.tudelft.jpacman.level;
 
 import nl.tudelft.jpacman.Launcher;
 import nl.tudelft.jpacman.level.unit.Player;
+import nl.tudelft.jpacman.strategies.HumanStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,7 @@ public class PlayerTest {
     @BeforeEach
     public void setUp() {
         launcher = new Launcher("src/test/resources/configuration.properties");
-        launcher.launch();
+        launcher.launch(HumanStrategy.class);
         player = launcher.getGame().getPlayers().get(0);
     }
 

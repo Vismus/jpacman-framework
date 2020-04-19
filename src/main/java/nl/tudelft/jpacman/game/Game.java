@@ -6,6 +6,7 @@ import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.level.Level;
 import nl.tudelft.jpacman.level.Level.LevelObserver;
 import nl.tudelft.jpacman.level.unit.Player;
+import nl.tudelft.jpacman.strategies.PacManStrategy;
 
 /**
  * A basic implementation of a Pac-Man game.
@@ -76,6 +77,16 @@ public abstract class Game implements LevelObserver {
      * @return The level currently being played.
      */
     public abstract Level getLevel();
+
+    /**
+     * @return The strategy for the game.
+     */
+    public abstract PacManStrategy getStrategy();
+
+    /**
+     * @param strategy the selected strategy
+     */
+    public abstract void selectStrategy(Class<? extends PacManStrategy> clazz);
 
     /**
      * Change the direction of the player in the game.

@@ -6,6 +6,7 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import nl.tudelft.jpacman.Launcher;
 import nl.tudelft.jpacman.game.Game;
+import nl.tudelft.jpacman.strategies.HumanStrategy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,7 +34,7 @@ public class StartStopSteps {
     @Given("^the user has launched the JPacman GUI$")
     public void theUserHasLaunchedTheJPacmanGUI() {
         launcher = new Launcher("src/test/resources/configuration.properties");
-        launcher.launch();
+        launcher.launch(HumanStrategy.class);
     }
 
     /**

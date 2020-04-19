@@ -3,7 +3,7 @@ package nl.tudelft.jpacman.npc;
 import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.board.Square;
 import nl.tudelft.jpacman.board.Unit;
-import nl.tudelft.jpacman.npc.ghost.Navigation;
+import nl.tudelft.jpacman.strategies.Navigation;
 import nl.tudelft.jpacman.sprite.Sprite;
 
 import java.util.*;
