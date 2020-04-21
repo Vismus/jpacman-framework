@@ -1,5 +1,6 @@
 package nl.tudelft.jpacman.level;
 
+import nl.tudelft.jpacman.ConfigurationLoader;
 import nl.tudelft.jpacman.Launcher;
 import nl.tudelft.jpacman.level.unit.Player;
 import nl.tudelft.jpacman.strategies.HumanStrategy;
@@ -46,7 +47,7 @@ public class PlayerTest {
     @Test
     public void testPlayerGainsExtraLife() {
         assertThat(player.getRemainingLifes()).isEqualTo(3);
-        player.addPoints(10000);
+        player.addPoints(Integer.parseInt(ConfigurationLoader.getProperty("player.score.extra.life")));
         assertThat(player.getRemainingLifes()).isEqualTo(4);
     }
 }

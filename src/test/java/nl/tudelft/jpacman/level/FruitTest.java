@@ -84,7 +84,7 @@ public class FruitTest {
         level.move(p, Direction.EAST);
         level.move(p, Direction.EAST);
         level.move(p, Direction.SOUTH);
-        assert (p.getScore() == 30);
+        assert (p.getScore() == 3 * Integer.parseInt(ConfigurationLoader.getProperty("level.factory.pellet.value")));
         assert (level.getNbPellets() / 2 == level.remainingPellets(false));
         level.move(p, Direction.SOUTH);
         assert (fruitSquare.getOccupants().get(0) instanceof Fruit);
@@ -104,7 +104,7 @@ public class FruitTest {
         assert (p.getScore() == 0);
         level.move(p, Direction.EAST);
         assert fruitSquare.getOccupants().size() == 1 && fruitSquare.getOccupants().get(0) instanceof Player;
-        assert p.getScore() == 100;
+        assert p.getScore() == Integer.parseInt(ConfigurationLoader.getProperty("fruit.factory.cherry.value"));
     }
 
     /**
@@ -121,7 +121,7 @@ public class FruitTest {
         assert p.getScore() == 0;
         level.move(p, Direction.EAST);
         assert fruitSquare.getOccupants().size() == 1 && fruitSquare.getOccupants().get(0) instanceof Player;
-        assert p.getScore() == 300;
+        assert p.getScore() == Integer.parseInt(ConfigurationLoader.getProperty("fruit.factory.strawberry.value"));
     }
 
     /**
@@ -138,7 +138,7 @@ public class FruitTest {
         assert p.getScore() == 0;
         level.move(p, Direction.EAST);
         assert fruitSquare.getOccupants().size() == 1 && fruitSquare.getOccupants().get(0) instanceof Player;
-        assert p.getScore() == 500;
+        assert p.getScore() == Integer.parseInt(ConfigurationLoader.getProperty("fruit.factory.orange.value"));
     }
 
     /**
@@ -155,7 +155,7 @@ public class FruitTest {
         assert p.getScore() == 0;
         level.move(p, Direction.EAST);
         assert fruitSquare.getOccupants().size() == 1 && fruitSquare.getOccupants().get(0) instanceof Player;
-        assert p.getScore() == 700;
+        assert p.getScore() == Integer.parseInt(ConfigurationLoader.getProperty("fruit.factory.apple.value"));
     }
 
     /**
@@ -172,6 +172,6 @@ public class FruitTest {
         assert p.getScore() == 0;
         level.move(p, Direction.EAST);
         assert fruitSquare.getOccupants().size() == 1 && fruitSquare.getOccupants().get(0) instanceof Player;
-        assert p.getScore() == 1000;
+        assert p.getScore() == Integer.parseInt(ConfigurationLoader.getProperty("fruit.factory.melon.value"));
     }
 }
