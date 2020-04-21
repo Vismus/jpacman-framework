@@ -11,7 +11,7 @@ public class FruitFactory {
 
     /**
      * Creates a new fruit factory
-     * @param spriteStore
+     * @param spriteStore The sprite store
      */
     public FruitFactory(PacManSprites spriteStore) {
         this.sprites = spriteStore;

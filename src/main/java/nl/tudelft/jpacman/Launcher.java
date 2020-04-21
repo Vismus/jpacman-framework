@@ -67,8 +67,6 @@ public class Launcher {
 
     /**
      * Creates a new game using the level from {@link #makeLevel()}.
-     *
-     * @return a new Game.
      */
     public void makeGame() {
         GameFactory gf = getGameFactory();

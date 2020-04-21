@@ -12,7 +12,7 @@ public abstract class PacManStrategy {
     /**
      * Constructor PacManStrategy.
      *
-     * @param game
+     * @param game The Game
      */
     public PacManStrategy(Game game) {
         this.game = game;
